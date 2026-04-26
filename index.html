@@ -908,15 +908,9 @@
         <label>WhatsApp / Teléfono *</label>
         <input id="fi-tel" type="tel" placeholder="Ej: 3764160290" required inputmode="numeric" pattern="[0-9\s\+\-]+" oninput="this.value=this.value.replace(/[^0-9\s\+\-]/g,'')" />
       </div>
-      <div class="form-row">
-        <div class="fg">
-          <label>Localidad *</label>
-          <input id="fi-loc" type="text" placeholder="Buenos Aires" required />
-        </div>
-        <div class="fg">
-          <label>Nombre de usuario *</label>
-          <input id="fi-user" type="text" placeholder="juangarcia" required />
-        </div>
+      <div class="fg">
+        <label>Localidad *</label>
+        <input id="fi-loc" type="text" placeholder="Buenos Aires" required />
       </div>
       <div class="fg">
         <label>Instagram *</label>
@@ -1137,11 +1131,10 @@ function submitForm(e){
   const apellido = v('fi-apellido');
   const tel      = v('fi-tel');
   const loc      = v('fi-loc');
-  const user     = v('fi-user');
   const ig       = v('fi-ig');
   const email    = v('fi-email');
 
-  if(!nombre||!apellido||!tel||!loc||!user||!ig||!email){
+  if(!nombre||!apellido||!tel||!loc||!ig||!email){
     shake(document.getElementById('f'));
     return;
   }
@@ -1156,7 +1149,7 @@ function submitForm(e){
     id: participId,
     fecha: new Date().toLocaleString('es-AR'),
     nombre, apellido, email, telefono:tel,
-    localidad:loc, usuario:user, instagram:ig,
+    localidad:loc, instagram:ig,
     opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price,
     estado: 'Pendiente de pago'
   };
