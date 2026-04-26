@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gran Sorteo · Moto 0km</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>try{ emailjs.init({ publicKey:"MHX-Y7Vo7VNs0d17b" }); }catch(e){ console.error('EmailJS init:',e); }</script>
+
+  <style>
+    /* ── Variables ── */
+    :root {
+      --orange: #ff6a00;
+      --amber: #ffb300;
+      --gold:   #ffd700;
+      --dark:   #080808;
+      --card:   #111111;
+      --border: #1e1e1e;
+      --text:   #f5f5f5;
+      --muted:  rgba(255,255,255,.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    img { max-width: 100%; height: auto; }
+
+    /* ── Particles canvas ── */
+    #particles {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Utility ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 0%, var(--gold) 45%, var(--orange) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .z1 { position: relative; z-index: 1; }
+
+    /* ══════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════ */
+    .hero {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 70px 20px 20px;
+    }
+
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      color: #000; font-weight: 800; font-size: .75rem;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      padding: 7px 20px; border-radius: 50px;
+      margin-bottom: 24px;
+      animation: pillPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pillPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,106,0,.5); }
+      50%      { box-shadow: 0 0 0 12px rgba(255,106,0,0); }
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 14vw, 8rem);
+      letter-spacing: 6px; line-height: .95;
+      margin-bottom: 14px;
+    }
+
+    .hero-sub {
+      font-size: clamp(.85rem, 2.5vw, 1.1rem);
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 50px;
+    }
+
+    /* Moto */
+    .moto-wrap {
+      position: relative;
+      display: inline-block;
+      max-width: 520px; width: 100%;
+    }
+
+    .moto-wrap img {
+      width: 100%; border-radius: 22px;
+      filter: drop-shadow(0 30px 70px rgba(255,106,0,.4));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    .moto-shadow {
+      position: absolute; bottom: -18px; left: 50%;
+      transform: translateX(-50%);
+      width: 70%; height: 36px;
+      background: var(--orange);
+      filter: blur(32px);
+      opacity: .45; border-radius: 50%;
+      animation: float 4s ease-in-out infinite reverse;
+    }
+
+    /* Stats row */
+    .stats {
+      display: flex; justify-content: center;
+      gap: clamp(20px, 5vw, 60px);
+      padding: 50px 20px 60px;
+      position: relative; z-index: 1;
+    }
+
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      letter-spacing: 2px;
+    }
+    .stat-lbl { font-size: .7rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+
+    .stat-divider { width: 1px; background: var(--border); align-self: stretch; }
+
+    /* ══════════════════════════════════════════
+       COUNTDOWN
+    ══════════════════════════════════════════ */
+    .countdown {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 0 20px 60px;
+    }
+
+    .cd-eyebrow {
+      font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--orange); font-weight: 700; margin-bottom: 8px;
+    }
+
+    .cd-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 8vw, 4rem);
+      letter-spacing: 4px;
+      background: linear-gradient(135deg,#fff 0%,var(--gold) 50%,var(--orange) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 28px;
+    }
+
+    .cd-timer {
+      display: inline-flex; align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px 28px;
+    }
+
+    .cd-block { text-align: center; min-width: 56px; }
+
+    .cd-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 7vw, 3.8rem);
+      letter-spacing: 2px; line-height: 1;
+      background: linear-gradient(180deg, var(--gold), var(--orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cd-label {
+      font-size: .6rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); margin-top: 4px;
+    }
+
+    .cd-sep {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem; color: rgba(255,255,255,.2);
+      line-height: 1; padding-bottom: 12px;
+    }
+
+    .cd-finished {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem; letter-spacing: 3px;
+      color: var(--gold);
+    }
+
+    /* ══════════════════════════════════════════
+       HOW IT WORKS
+    ══════════════════════════════════════════ */
+    .how {
+      position: relative; z-index: 1;
+      padding: 0 20px 70px;
+      max-width: 900px; margin: 0 auto;
+      text-align: center;
+    }
+
+    .section-label {
+      font-size: .7rem; letter-spacing: 3px;
+      color: var(--orange); text-transform: uppercase;
+      margin-bottom: 10px; font-weight: 700;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      letter-spacing: 3px;
+      margin-bottom: 40px;
+    }
+
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+    }
+
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 20px;
+    }
+
+    .step-num {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      color: #000; font-weight: 900; font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+
+    .step h3 { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+    .step p  { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+
+    /* ══════════════════════════════════════════
+       TICKETS
+    ══════════════════════════════════════════ */
+    .tickets-section {
+      position: relative; z-index: 1;
+      padding: 0 20px 80px;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .tickets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    /* Card */
+    .tcard {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .3s cubic-bezier(.25,.46,.45,.94),
+                  box-shadow .3s, border-color .3s;
+      position: relative;
+      display: flex; flex-direction: column;
+    }
+
+    .tcard:hover {
+      transform: translateY(-8px) scale(1.015);
+    }
+
+    .tcard.tier-1:hover { border-color: #cd7f32; box-shadow: 0 20px 60px rgba(205,127,50,.3); }
+    .tcard.tier-2:hover { border-color: #9e9e9e; box-shadow: 0 20px 60px rgba(158,158,158,.25); }
+    .tcard.tier-3       { border-color: rgba(255,215,0,.3); }
+    .tcard.tier-3:hover { border-color: var(--gold); box-shadow: 0 24px 70px rgba(255,215,0,.35); }
+
+    /* Shine sweep on hover */
+    .tcard::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.04) 50%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform .5s;
+      z-index: 0; pointer-events: none;
+    }
+    .tcard:hover::before { transform: translateX(100%); }
+
+    /* Popular ribbon */
+    .ribbon {
+      position: absolute; top: 14px; right: -1px;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #000; font-weight: 900; font-size: .68rem;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 5px 14px 5px 10px;
+      border-radius: 6px 0 0 6px;
+      z-index: 2;
+    }
+
+    /* Ticket tear line */
+    .tear {
+      height: 22px;
+      background: radial-gradient(circle at 50% 0, var(--dark) 8px, transparent 8px);
+      background-size: 22px 100%;
+      border-top: 1px dashed rgba(255,255,255,.1);
+    }
+
+    /* Card top */
+    .tcard-top {
+      padding: 28px 26px 0;
+      position: relative; z-index: 1;
+    }
+
+    .tcard-icon {
+      width: 54px; height: 54px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; margin-bottom: 16px;
+    }
+
+    .icon-1 { background: linear-gradient(135deg,#cd7f32,#7a4100); }
+    .icon-2 { background: linear-gradient(135deg,#bdbdbd,#616161); }
+    .icon-3 { background: linear-gradient(135deg,var(--gold),var(--orange)); }
+
+    .tcard-count {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem; letter-spacing: 2px; line-height: 1;
+    }
+    .tcard-sub { font-size: .78rem; color: var(--muted); letter-spacing: 1px; margin-top: 3px; }
+
+    /* Body */
+    .tcard-body {
+      padding: 20px 26px;
+      flex: 1;
+      position: relative; z-index: 1;
+    }
+
+    .tcard-feature {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 18px; font-size: .85rem; color: rgba(255,255,255,.7);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-1 { background: #cd7f32; }
+    .dot-2 { background: #bdbdbd; }
+    .dot-3 { background: var(--gold); }
+
+    .tcard-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem; letter-spacing: 2px; line-height: 1;
+    }
+    .price-1 { color: #cd7f32; }
+    .price-2 { color: #bdbdbd; }
+    .price-3 {
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tcard-currency { font-size: .72rem; color: var(--muted); letter-spacing: 1.5px; margin-top: 2px; }
+
+    /* Footer / CTA */
+    .tcard-footer {
+      padding: 0 26px 26px;
+      position: relative; z-index: 1;
+    }
+
+    .tcard-btn {
+      width: 100%; padding: 14px;
+      border: none; border-radius: 12px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800; font-size: .88rem;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer;
+      transition: filter .2s, transform .15s;
+    }
+    .tcard-btn:hover { filter: brightness(1.12); transform: scale(1.02); }
+
+    .btn-1 { background: linear-gradient(135deg,#cd7f32,#7a4100); color: #fff; }
+    .btn-2 { background: linear-gradient(135deg,#bdbdbd,#616161); color: #fff; }
+    .btn-3 { background: linear-gradient(135deg,var(--gold),var(--orange)); color: #000; }
+
+    /* ══════════════════════════════════════════
+       MODAL OVERLAY
+    ══════════════════════════════════════════ */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 24px;
+      padding: 44px 40px 38px;
+      width: 100%; max-width: 580px;
+      max-height: 92vh; overflow-y: auto;
+      transform: scale(.9) translateY(20px);
+      transition: transform .3s cubic-bezier(.25,.46,.45,.94);
+    }
+    .overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-head {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem; letter-spacing: 2px;
+    }
+
+    .modal-x {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(255,255,255,.08); border: none;
+      color: #fff; font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background .2s;
+    }
+    .modal-x:hover { background: rgba(255,255,255,.18); }
+
+    /* Selected option tag */
+    .opt-tag {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 50px; padding: 9px 20px;
+      font-size: .95rem; margin-bottom: 28px;
+    }
+
+    /* Form */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .fg { margin-bottom: 18px; }
+    .fg label {
+      display: block; font-size: .8rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 9px;
+    }
+    .fg input {
+      width: 100%;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: 15px 18px;
+      color: #fff; font-family: 'Montserrat', sans-serif;
+      font-size: 1rem; outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .fg input:focus {
+      border-color: var(--orange);
+      background: rgba(255,106,0,.06);
+    }
+    .fg input::placeholder { color: rgba(255,255,255,.25); }
+
+    .submit-btn {
+      width: 100%; margin-top: 10px;
+      padding: 17px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      border: none; border-radius: 14px;
+      color: #000; font-family: 'Montserrat', sans-serif;
+      font-weight: 900; font-size: 1.05rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255,106,0,.4);
+    }
+    .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ── QR Modal ── */
+    .qr-body { text-align: center; padding-bottom: 4px; }
+
+    .qr-greeting {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem; letter-spacing: 3px; line-height: 1;
+      margin-bottom: 4px;
+    }
+    .qr-tagline {
+      font-size: .88rem; color: var(--muted);
+      letter-spacing: 1px; margin-bottom: 20px;
+    }
+
+    /* Option badge inside QR modal */
+    .qr-opt-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      border-radius: 50px; padding: 10px 22px;
+      font-size: 1rem; font-weight: 700;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+    .qr-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: 1px;
+    }
+
+    /* QR frame with gradient glow border */
+    .qr-frame-wrap {
+      display: inline-block;
+      padding: 3px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--orange), var(--gold), var(--orange));
+      background-size: 200% 200%;
+      animation: qrBorderSpin 3s linear infinite;
+      margin-bottom: 20px;
+      box-shadow: 0 0 40px rgba(255,160,0,.35);
+    }
+    @keyframes qrBorderSpin {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .qr-frame-inner {
+      background: #fff;
+      border-radius: 20px;
+      padding: 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #qr-code { display: block; }
+
+    .qr-scan-hint {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: .8rem; color: var(--muted);
+      margin-bottom: 22px; letter-spacing: .5px;
+    }
+    .qr-scan-hint::before,
+    .qr-scan-hint::after {
+      content: ''; flex: 1; max-width: 60px;
+      height: 1px; background: rgba(255,255,255,.12);
+    }
+
+    .pay-link {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 17px 28px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      color: #000; text-decoration: none;
+      font-weight: 900; font-size: 1.05rem;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      transition: transform .2s, box-shadow .2s;
+      margin-bottom: 16px;
+    }
+    .pay-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 36px rgba(255,106,0,.55);
+    }
+    .pay-link-icon { font-size: 1.2rem; }
+
+    .qr-steps {
+      display: flex; justify-content: center; gap: 6px;
+      margin-bottom: 18px;
+    }
+    .qr-step-pill {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 50px; padding: 6px 14px;
+      font-size: .72rem; color: var(--muted);
+    }
+    .qr-step-pill strong { color: var(--amber); }
+
+    /* ID de participación */
+    .qr-id-box {
+      background: rgba(255,215,0,.07);
+      border: 1px solid rgba(255,215,0,.25);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+    }
+    .qr-id-label {
+      font-size: .65rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .qr-id-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem; letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .qr-id-hint {
+      font-size: .7rem; color: var(--muted);
+      margin-top: 5px; letter-spacing: .5px;
+    }
+
+    /* Botón Ya pagué */
+    .ya-pague-btn {
+      width: 100%; padding: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+      color: #fff; font-family: 'Montserrat', sans-serif;
+      font-weight: 800; font-size: .95rem;
+      letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, transform .15s;
+    }
+    .ya-pague-btn:hover {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.35);
+      transform: translateY(-1px);
+    }
+
+    /* Modal éxito */
+    .success-body { text-align: center; padding: 10px 0; }
+    .success-icon { font-size: 64px; margin-bottom: 12px; }
+    .success-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem; letter-spacing: 3px; margin-bottom: 6px;
+    }
+    .success-sub { color: var(--muted); font-size: .9rem; line-height: 1.6; margin-bottom: 28px; }
+    .success-id-box {
+      background: rgba(255,215,0,.07);
+      border: 1px solid rgba(255,215,0,.3);
+      border-radius: 14px; padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+    .success-id-label {
+      font-size: .65rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .success-id-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem; letter-spacing: 5px;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1;
+    }
+    .success-id-hint { font-size: .72rem; color: var(--muted); margin-top: 5px; }
+    .success-close-btn {
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      border: none; border-radius: 12px;
+      color: #000; font-family: 'Montserrat', sans-serif;
+      font-weight: 900; font-size: .95rem;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .qr-note {
+      color: rgba(255,255,255,.25); font-size: .72rem;
+      line-height: 1.7;
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 300;
+    }
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      color: rgba(255,255,255,.2); font-size: .78rem;
+      letter-spacing: .5px;
+    }
+    footer a { color: var(--orange); text-decoration: none; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 4px; }
+
+    /* ── Touch UX ── */
+    .tcard, .tcard-btn, .submit-btn, .pay-link, .modal-x, .tcard-btn {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 560px) {
+      .modal { padding: 28px 16px 24px; max-height: 96vh; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .stats { gap: 14px; padding: 36px 16px 48px; }
+      .stat-num { font-size: 1.7rem; }
+      .stat-lbl { font-size: .6rem; letter-spacing: 1px; }
+      .cd-timer { padding: 14px 10px; gap: 4px; border-radius: 14px; }
+      .cd-block { min-width: 40px; }
+      .cd-num { font-size: 2rem; }
+      .cd-sep { font-size: 1.6rem; padding-bottom: 8px; }
+      .tcard-top { padding: 20px 18px 0; }
+      .tcard-body { padding: 14px 18px; }
+      .tcard-footer { padding: 0 18px 18px; }
+      .hero { padding: 44px 16px 12px; }
+      .hero-sub { letter-spacing: 1.5px; margin-bottom: 32px; }
+      .tickets-section { padding: 0 12px 60px; }
+      .tickets-grid { gap: 14px; }
+      .qr-steps { flex-wrap: wrap; gap: 6px; justify-content: center; }
+      .qr-frame-wrap { max-width: 240px; }
+      #qr-code img, #qr-code canvas { max-width: 160px !important; max-height: 160px !important; }
+      .qr-id-num { font-size: 1.8rem; letter-spacing: 3px; }
+      .success-id-num { font-size: 2rem; letter-spacing: 4px; }
+      .how { padding: 0 16px 50px; }
+      .section-title { margin-bottom: 28px; }
+      .tcard-count { font-size: 2rem; }
+      .tcard-price { font-size: 2.6rem; }
+      .modal-title { font-size: 2.2rem; }
+    }
+
+    @media (max-width: 380px) {
+      .stats { flex-wrap: wrap; }
+      .stat-divider { display: none; }
+      .stat { min-width: 70px; }
+      .cd-timer { padding: 12px 8px; }
+      .cd-block { min-width: 36px; }
+      .cd-num { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Particle canvas -->
+<canvas id="particles"></canvas>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <div class="hero-pill">🏍️ &nbsp;Sorteo · 26 de Mayo 2026</div>
+
+  <h1 class="gradient-text">GANÁ<br>TU MOTO</h1>
+  <p class="hero-sub">Participá y llevate esta bestia 0km</p>
+
+  <div class="moto-wrap">
+    <img src="image.png" alt="Moto 0km – Premio del sorteo" />
+    <div class="moto-shadow"></div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats z1">
+  <div class="stat">
+    <div class="stat-num gradient-text">0KM</div>
+    <div class="stat-lbl">Estado</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <div class="stat-num gradient-text">3</div>
+    <div class="stat-lbl">Opciones</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <div class="stat-num gradient-text">1</div>
+    <div class="stat-lbl">Ganador</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <div class="stat-num gradient-text">100%</div>
+    <div class="stat-lbl">Seguro</div>
+  </div>
+</div>
+
+<!-- ══════════ COUNTDOWN ══════════ -->
+<section class="countdown">
+  <p class="cd-eyebrow">🔥 Fecha del sorteo</p>
+  <div class="cd-date">26 DE MAYO · 2026</div>
+  <div class="cd-timer" id="cd-timer">
+    <div class="cd-block"><div class="cd-num" id="cd-d">--</div><div class="cd-label">Días</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num" id="cd-h">--</div><div class="cd-label">Horas</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num" id="cd-m">--</div><div class="cd-label">Min</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num" id="cd-s">--</div><div class="cd-label">Seg</div></div>
+  </div>
+</section>
+
+<!-- ══════════ HOW IT WORKS ══════════ -->
+<section class="how">
+  <p class="section-label">¿Cómo participar?</p>
+  <h2 class="section-title">3 PASOS <span class="gradient-text">SIMPLES</span></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Elegí tu ticket</h3>
+      <p>Seleccioná cuántas chances querés tener. Más tickets = más posibilidades.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Cargá tus datos</h3>
+      <p>Completá el formulario con tu nombre, teléfono e Instagram.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Pagá y listo</h3>
+      <p>Escaneá el QR o usá el link de pago. Enviá el comprobante para confirmar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TICKETS ══════════ -->
+<section class="tickets-section">
+  <div style="text-align:center; margin-bottom:42px">
+    <p class="section-label">Tickets disponibles</p>
+    <h2 class="section-title">ELEGÍ TU <span class="gradient-text">OPCIÓN</span></h2>
+  </div>
+
+  <div class="tickets-grid">
+
+    <!-- Tier 1 -->
+    <div class="tcard tier-1" onclick="openForm(0)">
+      <div class="tcard-top">
+        <div class="tcard-icon icon-1">🎫</div>
+        <div class="tcard-count">1 TICKET</div>
+        <div class="tcard-sub">1 CHANCE DE GANAR</div>
+      </div>
+      <div class="tear"></div>
+      <div class="tcard-body">
+        <div class="tcard-feature">
+          <span class="dot dot-1"></span>
+          Tu nombre aparece <strong>&nbsp;1 vez</strong>
+        </div>
+        <div class="tcard-price price-1">$8.600</div>
+        <div class="tcard-currency">PESOS ARGENTINOS</div>
+      </div>
+      <div class="tcard-footer">
+        <button class="tcard-btn btn-1">Participar →</button>
+      </div>
+    </div>
+
+    <!-- Tier 2 -->
+    <div class="tcard tier-2" onclick="openForm(1)">
+      <div class="tcard-top">
+        <div class="tcard-icon icon-2">🎟️</div>
+        <div class="tcard-count">2 TICKETS</div>
+        <div class="tcard-sub">DOBLE CHANCE DE GANAR</div>
+      </div>
+      <div class="tear"></div>
+      <div class="tcard-body">
+        <div class="tcard-feature">
+          <span class="dot dot-2"></span>
+          Tu nombre aparece <strong>&nbsp;2 veces</strong>
+        </div>
+        <div class="tcard-price price-2">$15.000</div>
+        <div class="tcard-currency">PESOS ARGENTINOS</div>
+      </div>
+      <div class="tcard-footer">
+        <button class="tcard-btn btn-2">Participar →</button>
+      </div>
+    </div>
+
+    <!-- Tier 3 (Gold) -->
+    <div class="tcard tier-3" onclick="openForm(2)">
+      <div class="ribbon">⭐ Más popular</div>
+      <div class="tcard-top">
+        <div class="tcard-icon icon-3">🏆</div>
+        <div class="tcard-count">3 TICKETS</div>
+        <div class="tcard-sub">TRIPLE CHANCE DE GANAR</div>
+      </div>
+      <div class="tear"></div>
+      <div class="tcard-body">
+        <div class="tcard-feature">
+          <span class="dot dot-3"></span>
+          Tu nombre aparece <strong>&nbsp;3 veces</strong>
+        </div>
+        <div class="tcard-price price-3">$20.500</div>
+        <div class="tcard-currency">PESOS ARGENTINOS</div>
+      </div>
+      <div class="tcard-footer">
+        <button class="tcard-btn btn-3">Participar →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ FORM MODAL ══════════ -->
+<div class="overlay" id="form-overlay" onclick="overlayClick(event,'form-overlay')">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">TUS DATOS</div>
+        <p style="color:var(--muted);font-size:.9rem;margin-top:4px">Completá tus datos para registrar tu pago</p>
+      </div>
+      <button class="modal-x" onclick="closeModal('form-overlay')">✕</button>
+    </div>
+
+    <div id="opt-tag"></div>
+
+    <form id="f" onsubmit="submitForm(event)" novalidate>
+      <div class="form-row">
+        <div class="fg">
+          <label>Nombre *</label>
+          <input id="fi-nombre" type="text" placeholder="Juan" required />
+        </div>
+        <div class="fg">
+          <label>Apellido *</label>
+          <input id="fi-apellido" type="text" placeholder="García" required />
+        </div>
+      </div>
+      <div class="fg">
+        <label>WhatsApp / Teléfono *</label>
+        <input id="fi-tel" type="tel" placeholder="Ej: 3764160290" required inputmode="numeric" pattern="[0-9\s\+\-]+" oninput="this.value=this.value.replace(/[^0-9\s\+\-]/g,'')" />
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Localidad *</label>
+          <input id="fi-loc" type="text" placeholder="Buenos Aires" required />
+        </div>
+        <div class="fg">
+          <label>Nombre de usuario *</label>
+          <input id="fi-user" type="text" placeholder="juangarcia" required />
+        </div>
+      </div>
+      <div class="fg">
+        <label>Instagram *</label>
+        <input id="fi-ig" type="text" placeholder="@juangarcia" required />
+      </div>
+      <div class="fg">
+        <label>Email *</label>
+        <input id="fi-email" type="email" placeholder="juan@gmail.com" required />
+      </div>
+      <button type="submit" class="submit-btn" id="sbtn">CONFIRMAR PARTICIPACIÓN →</button>
+    </form>
+  </div>
+</div>
+
+<!-- Confetti canvas (over everything) -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══════════ QR / PAYMENT MODAL ══════════ -->
+<div class="overlay" id="qr-overlay" onclick="overlayClick(event,'qr-overlay')">
+  <div class="modal">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <button class="modal-x" onclick="closeModal('qr-overlay')">✕</button>
+    </div>
+
+    <div class="qr-body">
+
+      <div class="qr-greeting gradient-text" id="qr-name">¡LISTO!</div>
+      <p class="qr-tagline">📧 Te enviamos un email con tu número · Pagá para confirmar</p>
+
+      <!-- Option + price badge -->
+      <div id="qr-opt-badge" class="qr-opt-badge">
+        <span id="qr-badge-emoji">🏆</span>
+        <span id="qr-badge-label" style="font-weight:700">3 Tickets</span>
+        <span style="color:var(--muted)">·</span>
+        <span class="qr-price" id="qr-badge-price">$20.500</span>
+      </div>
+
+      <!-- QR code with glowing border -->
+      <div class="qr-frame-wrap">
+        <div class="qr-frame-inner">
+          <div id="qr-code"></div>
+        </div>
+      </div>
+
+      <p class="qr-scan-hint">Escaneá con la cámara o MercadoPago</p>
+
+      <!-- Payment button -->
+      <a href="#" id="qr-paylink" class="pay-link" target="_blank" rel="noopener">
+        <span class="pay-link-icon">💳</span>
+        IR AL PAGO EN MERCADOPAGO
+      </a>
+
+      <!-- ID de participación -->
+      <div class="qr-id-box">
+        <p class="qr-id-label">Tu número de participación</p>
+        <div class="qr-id-num" id="qr-id-display">MOTO-XXXXXX</div>
+        <p class="qr-id-hint">Guardalo · también te llegó por email</p>
+      </div>
+
+      <p class="qr-note">
+        Luego de abonar, enviá el comprobante por WhatsApp o DM de Instagram para confirmar. ¡Mucha suerte! 🍀
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ÉXITO MODAL ══════════ -->
+<div class="overlay" id="success-overlay">
+  <div class="modal">
+    <div class="success-body">
+      <div class="success-icon">🎉</div>
+      <div class="success-title gradient-text">¡REGISTRADO!</div>
+      <p class="success-sub">
+        📧 Te enviamos un email a<br>
+        <strong id="success-email" style="color:#fff"></strong><br>
+        con tu número de participación.
+      </p>
+      <div class="success-id-box">
+        <p class="success-id-label">Tu número de participación</p>
+        <div class="success-id-num" id="success-id-num">MOTO-XXXXXX</div>
+        <p class="success-id-hint">Guardalo — lo necesitás el día del sorteo</p>
+      </div>
+      <button class="success-close-btn" onclick="closeModal('success-overlay')">
+        CERRAR
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <p>© 2025 Gran Sorteo · Bases y condiciones disponibles · Organizado en Argentina</p>
+  <p style="margin-top:6px">Ante cualquier consulta escribinos por Instagram</p>
+</footer>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   ⚙️  CONFIGURACIÓN — editá solo estos valores
+   ══════════════════════════════════════════════════════════
+
+   1. Reemplazá los links de pago (MercadoPago, etc.)
+   2. Si querés que los datos lleguen a Google Sheets,
+      seguí las instrucciones al final de este archivo y
+      pegá la URL de tu Apps Script en googleSheetUrl.
+
+   ══════════════════════════════════════════════════════════ */
+const CFG = {
+  payLinks: [
+    "https://www.mercadopago.com.ar/payment-link/v1/redirect?link-id=375ebf3b-e82e-405f-a4e7-ccb6864c3526&source=link",
+    "https://www.mercadopago.com.ar/payment-link/v1/redirect?link-id=598120e6-b1a2-4ae5-ab6b-0573593a7081&source=link",
+    "https://mercadopago.com.ar/checkout/v1/payment/redirect/?source=link&preference-id=567015851-0bb3f6ff-3b66-4f61-97fd-54b9c7945137&router-request-id=028c3cfe-a1db-4a20-bdb3-102dad701145",
+  ],
+  googleSheetUrl: "https://script.google.com/macros/s/AKfycbxWR-LiohFB5G1-SkOtqGudAUmOeRmZ-ctXebgtxQ4eSNRKuVd7Q9kh4FYDbmYuY7e7ig/exec",
+
+  // ── EmailJS (para enviar el email al participante) ──
+  emailjs: {
+    publicKey:  "MHX-Y7Vo7VNs0d17b",
+    serviceId:  "service_i0hnw6p",
+    templateId: "h67r2y8",
+  },
+};
+
+/* ── Opciones ─────────────────────────────────────── */
+const OPS = [
+  { label:"1 Ticket",  price:"$8.600",  color:"#cd7f32", emoji:"🥉" },
+  { label:"2 Tickets", price:"$15.000", color:"#bdbdbd", emoji:"🥈" },
+  { label:"3 Tickets", price:"$20.500", color:"#ffd700", emoji:"🏆" },
+];
+
+let sel = 0;
+let pendingIdx = 0; // opción seleccionada para el formulario post-pago
+
+/* ── Particles ──────────────────────────────────────────── */
+(function(){
+  const cvs = document.getElementById('particles');
+  const ctx = cvs.getContext('2d');
+  const resize = () => { cvs.width = innerWidth; cvs.height = innerHeight; };
+  resize(); addEventListener('resize', resize);
+  const pts = Array.from({length:90}, () => ({
+    x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+    r: Math.random()*1.4+.2,
+    vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35,
+    a: Math.random()*.45+.08
+  }));
+  (function tick(){
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+    pts.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,160,40,${p.a})`;
+      ctx.fill();
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>cvs.width) p.vx*=-1;
+      if(p.y<0||p.y>cvs.height) p.vy*=-1;
+    });
+    requestAnimationFrame(tick);
+  })();
+})();
+
+/* ── Modal helpers ──────────────────────────────── */
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  if(!document.querySelector('.overlay.open')) document.body.style.overflow='';
+}
+function overlayClick(e,id){
+  if(e.target===document.getElementById(id)) closeModal(id);
+}
+
+/* ── Click ticket → abre formulario ────────────── */
+function openForm(idx){
+  sel = idx;
+  pendingIdx = idx;
+  const op = OPS[idx];
+  document.getElementById('opt-tag').innerHTML = `
+    <div class="opt-tag">
+      <span>${op.emoji}</span>
+      <span style="color:${op.color};font-weight:700">${op.label}</span>
+      <span style="color:var(--muted)">·</span>
+      <span>${op.price}</span>
+    </div>`;
+  openModal('form-overlay');
+}
+
+/* ── Envío de email via EmailJS ─────────────────── */
+function sendEmail(data){
+  emailjs.send("service_i0hnw6p", "template_8njjjng", {
+    to_email:  data.email,
+    to_name:   data.nombre,
+    part_id:   data.id,
+    opcion:    data.opcion,
+    monto:     data.monto,
+    fecha:     data.fecha,
+  }).then(
+    () => console.log('Email enviado OK'),
+    err => console.error('EmailJS error:', JSON.stringify(err))
+  );
+}
+
+/* ── Envío a Google Sheets via GET (evita el redirect de GAS) ── */
+function sendToSheet(data){
+  if(!CFG.googleSheetUrl) return;
+  const url = CFG.googleSheetUrl + '?' + new URLSearchParams(data).toString();
+  fetch(url, { mode:'no-cors' }).catch(() => {});
+}
+
+/* ── Submit form ────────────────────────────────── */
+function submitForm(e){
+  e.preventDefault();
+
+  const v = id => document.getElementById(id).value.trim();
+  const nombre   = v('fi-nombre');
+  const apellido = v('fi-apellido');
+  const tel      = v('fi-tel');
+  const loc      = v('fi-loc');
+  const user     = v('fi-user');
+  const ig       = v('fi-ig');
+  const email    = v('fi-email');
+
+  if(!nombre||!apellido||!tel||!loc||!user||!ig||!email){
+    shake(document.getElementById('f'));
+    return;
+  }
+
+  /* Generar ID único */
+  const participId = 'MOTO-' + Date.now().toString(36).toUpperCase().slice(-6);
+
+  const btn = document.getElementById('sbtn');
+  btn.textContent='Enviando…'; btn.disabled=true;
+
+  const payload = {
+    id: participId,
+    fecha: new Date().toLocaleString('es-AR'),
+    nombre, apellido, email, telefono:tel,
+    localidad:loc, usuario:user, instagram:ig,
+    opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price,
+    estado: 'Pendiente de pago'
+  };
+
+  /* Guardar en planilla + enviar email */
+  sendToSheet(payload);
+  sendEmail(payload);
+
+  btn.textContent='CONFIRMAR PARTICIPACIÓN →'; btn.disabled=false;
+  closeModal('form-overlay');
+  document.getElementById('f').reset();
+
+  /* Mostrar QR con ID */
+  showQR(pendingIdx, nombre, participId);
+  launchConfetti();
+}
+
+/* ── Show QR ────────────────────────────────────── */
+function showQR(idx, nombre, participId){
+  const op   = OPS[idx];
+  const link = CFG.payLinks[idx];
+
+  document.getElementById('qr-name').textContent        = nombre ? `¡LISTO, ${nombre.toUpperCase()}!` : op.label.toUpperCase();
+  document.getElementById('qr-badge-emoji').textContent = op.emoji;
+  document.getElementById('qr-badge-label').textContent = op.label;
+  document.getElementById('qr-badge-label').style.color = op.color;
+  document.getElementById('qr-badge-price').textContent = op.price;
+  document.getElementById('qr-badge-price').style.color = op.color;
+
+  /* Payment link */
+  document.getElementById('qr-paylink').href = link;
+
+  /* Generate QR */
+  const qc = document.getElementById('qr-code');
+  qc.innerHTML = '';
+  if(typeof QRCode !== 'undefined'){
+    new QRCode(qc,{
+      text: link,
+      width: 200, height: 200,
+      colorDark:'#000000', colorLight:'#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  } else {
+    qc.innerHTML = `<p style="font-size:.8rem;color:#888;padding:20px">QR no disponible.<br>Usá el botón de pago.</p>`;
+  }
+
+  if(participId) document.getElementById('qr-id-display').textContent = participId;
+
+  openModal('qr-overlay');
+}
+
+/* ── Confetti ────────────────────────────────────── */
+function launchConfetti(){
+  const cvs = document.getElementById('confetti-canvas');
+  const ctx  = cvs.getContext('2d');
+  cvs.width  = innerWidth;
+  cvs.height = innerHeight;
+
+  const colors = ['#ff6a00','#ffd700','#ffb300','#fff','#ff4444','#44ff88'];
+  const pieces = Array.from({length:120}, () => ({
+    x: Math.random() * cvs.width,
+    y: -10 - Math.random() * 200,
+    r: Math.random() * 6 + 3,
+    d: Math.random() * 120 + 60,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    tilt: Math.random() * 10 - 5,
+    tiltSpeed: (Math.random() - 0.5) * 0.15,
+    vy: Math.random() * 3 + 2,
+    vx: (Math.random() - 0.5) * 2,
+    alpha: 1,
+  }));
+
+  let frame = 0;
+  (function tick(){
+    if(frame > 180){ ctx.clearRect(0,0,cvs.width,cvs.height); return; }
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+    pieces.forEach(p => {
+      p.y    += p.vy;
+      p.x    += p.vx;
+      p.tilt += p.tiltSpeed;
+      if(frame > 120) p.alpha -= 0.02;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.alpha);
+      ctx.fillStyle   = p.color;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, p.r, p.r*0.4, p.tilt, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    });
+    frame++;
+    requestAnimationFrame(tick);
+  })();
+}
+
+/* ── Countdown ──────────────────────────────────── */
+(function(){
+  const target = new Date('2026-05-26T12:00:00-03:00');
+  const pad = n => String(n).padStart(2,'0');
+  function tick(){
+    const diff = target - Date.now();
+    if(diff <= 0){
+      document.getElementById('cd-timer').innerHTML =
+        '<div class="cd-finished">🎉 ¡HOY ES EL SORTEO!</div>';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-d').textContent = pad(d);
+    document.getElementById('cd-h').textContent = pad(h);
+    document.getElementById('cd-m').textContent = pad(m);
+    document.getElementById('cd-s').textContent = pad(s);
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+/* ── Shake animation for validation ──────────────── */
+function shake(el){
+  el.style.animation='none';
+  el.offsetHeight; // reflow
+  el.style.animation='shakeForm .4s ease';
+}
+
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `
+@keyframes shakeForm {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-6px)}
+  80%{transform:translateX(6px)}
+}`;
+document.head.appendChild(shakeStyle);
+</script>
+
+
+</body>
+</html>

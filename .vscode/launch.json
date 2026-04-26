@@ -1,0 +1,1 @@
+{"version":"0.2.0","configurations":[{"name":"Abrir en navegador","type":"msedge","request":"launch","file":"${workspaceFolder}/index.html"}]}
