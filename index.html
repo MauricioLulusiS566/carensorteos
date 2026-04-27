@@ -1267,6 +1267,12 @@ function submitForm(e){
   };
   sendToSheet(payload);
 
+  /* Guardar en localStorage para el email al volver del pago */
+  localStorage.setItem('sorteoEmail', JSON.stringify({
+    id: participId, nombre, email,
+    opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price
+  }));
+
   /* Crear checkout de MP via función Netlify (mismo dominio, sin CORS) */
   fetch('/.netlify/functions/crear-pago?' + new URLSearchParams({
     id: participId, email,
@@ -1375,10 +1381,18 @@ function launchConfetti(){
   window.addEventListener('load', () => {
     if(!confirmarId) return;
 
-    /* Confirmar pago en planilla + enviar email */
+    /* Confirmar pago en planilla */
     fetch(CFG.googleSheetUrl + '?' + new URLSearchParams({
       action: 'confirmar', id: confirmarId
     }).toString(), { mode: 'no-cors' }).catch(() => {});
+
+    /* Enviar email con EmailJS si tenemos los datos */
+    const raw = localStorage.getItem('sorteoEmail');
+    if(raw) {
+      const d = JSON.parse(raw);
+      localStorage.removeItem('sorteoEmail');
+      sendEmail({ id: d.id, nombre: d.nombre, email: d.email, opcion: d.opcion, monto: d.monto });
+    }
 
     /* Mostrar modal verde con el ID */
     document.getElementById('paid-id-num').textContent = confirmarId;
