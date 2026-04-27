@@ -1308,8 +1308,6 @@ function showQR(idx, nombre, participId){
     qc.innerHTML = `<p style="font-size:.8rem;color:#888;padding:20px">QR no disponible.<br>Usá el botón de pago.</p>`;
   }
 
-  if(participId) document.getElementById('qr-id-display').textContent = participId;
-
   openModal('qr-overlay');
 }
 
