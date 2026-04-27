@@ -1133,7 +1133,7 @@ const CFG = {
     "https://mpago.la/1f8To6K",   // $17.000 - 2 tickets
     "https://mpago.la/2yycqjD",   // $25.000 - 3 tickets
   ],
-  googleSheetUrl: "https://script.google.com/macros/s/AKfycbyL8zGQX1059hHR5xjDpnC8reUyUJmYxdYNfQkN7THdBetuQVM4QEMf5o3GZTzHigcX5w/exec",
+  googleSheetUrl: "https://script.google.com/macros/s/AKfycbyVUh_MCrJhBnpDF-mfdGRaIun6dkLxf0FGA9u3lRWuIP5kqle-kTEX3b4u8PuLTKXegA/exec",
 
   // ── EmailJS (para enviar el email al participante) ──
   emailjs: {
@@ -1253,23 +1253,35 @@ function submitForm(e){
   const btn = document.getElementById('sbtn');
   btn.textContent='Enviando…'; btn.disabled=true;
 
-  /* Guardar todos los datos en localStorage — se registran SOLO cuando pagan */
-  localStorage.setItem('sorteoParticip', JSON.stringify({
+  btn.textContent = '⏳ Procesando...'; btn.disabled = true;
+  closeModal('form-overlay');
+  document.getElementById('f').reset();
+
+  /* Pedir link único de pago al GAS */
+  const gasUrl = CFG.googleSheetUrl + '?' + new URLSearchParams({
+    action: 'crearPago',
     id: participId,
     fecha: new Date().toLocaleString('es-AR'),
     nombre, apellido, email, telefono: tel,
     localidad: loc, instagram: ig,
     opcion: OPS[pendingIdx].label,
-    monto: OPS[pendingIdx].price,
-    estado: '✅ Pagado'
-  }));
+    monto: OPS[pendingIdx].price
+  }).toString();
 
-  btn.textContent='IR AL PAGO →'; btn.disabled=false;
-  closeModal('form-overlay');
-  document.getElementById('f').reset();
-
-  /* Ir directo al link de pago de MP */
-  window.location.href = CFG.payLinks[pendingIdx];
+  fetch(gasUrl)
+    .then(r => r.json())
+    .then(data => {
+      if(data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Error al generar el pago. Intentá de nuevo.');
+        btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
+      }
+    })
+    .catch(() => {
+      alert('Error de conexión. Intentá de nuevo.');
+      btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
+    });
 }
 
 /* ── Show QR ────────────────────────────────────── */
@@ -1354,18 +1366,18 @@ function launchConfetti(){
 
   history.replaceState({}, '', location.pathname);
 
+  const confirmarId = params.get('id');
+
   window.addEventListener('load', () => {
-    const raw = localStorage.getItem('sorteoParticip');
-    if(!raw) return;
-    const data = JSON.parse(raw);
-    localStorage.removeItem('sorteoParticip');
+    if(!confirmarId) return;
 
-    /* Registrar en planilla + enviar email ahora que pagó */
-    sendToSheet(data);
-    sendEmail(data);
+    /* Confirmar pago en planilla + enviar email */
+    fetch(CFG.googleSheetUrl + '?' + new URLSearchParams({
+      action: 'confirmar', id: confirmarId
+    }).toString(), { mode: 'no-cors' }).catch(() => {});
 
-    /* Mostrar modal de pago confirmado */
-    document.getElementById('paid-id-num').textContent = data.id;
+    /* Mostrar modal verde con el ID */
+    document.getElementById('paid-id-num').textContent = confirmarId;
     openModal('paid-overlay');
     launchConfetti();
   });
