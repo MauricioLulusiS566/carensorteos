@@ -25,7 +25,8 @@ exports.handler = async (event) => {
           failure: 'https://carensorteos.com',
           pending: 'https://carensorteos.com'
         },
-        auto_return: 'approved'
+        auto_return: 'approved',
+        notification_url: 'https://carensorteos.com/.netlify/functions/ipn-mp'
       })
     });
 
