@@ -1020,7 +1020,7 @@
     <div class="qr-body">
 
       <div class="qr-greeting gradient-text" id="qr-name">¡LISTO!</div>
-      <p class="qr-tagline">📧 Te enviamos un email con tu número · Pagá para confirmar</p>
+      <p class="qr-tagline">Pagá y recibís tu número de participación 🎯</p>
 
       <!-- Option + price badge -->
       <div style="display:block;text-align:center;margin-bottom:16px">
@@ -1047,15 +1047,8 @@
         IR AL PAGO EN MERCADOPAGO
       </a>
 
-      <!-- ID de participación -->
-      <div class="qr-id-box">
-        <p class="qr-id-label">Tu número de participación</p>
-        <div class="qr-id-num" id="qr-id-display">MOTO-XXXXXX</div>
-        <p class="qr-id-hint">Guardalo · también te llegó por email</p>
-      </div>
-
       <p class="qr-note">
-        Luego de abonar, enviá el comprobante por WhatsApp o DM de Instagram para confirmar. ¡Mucha suerte! 🍀
+        Tu número de participación aparece después de confirmar el pago. ¡Mucha suerte! 🍀
       </p>
 
     </div>
@@ -1274,9 +1267,8 @@ function submitForm(e){
     id: participId, nombre, opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price
   }));
 
-  /* Guardar en planilla + enviar email */
+  /* Guardar en planilla (email se envía recién cuando paga) */
   sendToSheet(payload);
-  sendEmail(payload);
 
   btn.textContent='CONFIRMAR PARTICIPACIÓN →'; btn.disabled=false;
   closeModal('form-overlay');
@@ -1376,13 +1368,16 @@ function launchConfetti(){
   const data = JSON.parse(raw);
   localStorage.removeItem('sorteoParticip');
 
-  /* Actualizar planilla a "✅ Pagado" */
+  /* Actualizar planilla a "✅ Pagado" + disparar email con ID */
   if(CFG.googleSheetUrl && data.id){
     const url = CFG.googleSheetUrl + '?' + new URLSearchParams({
       action: 'confirmar', id: data.id
     }).toString();
     fetch(url, { mode:'no-cors' }).catch(()=>{});
   }
+
+  /* Enviar email con ID ahora que el pago está confirmado */
+  sendEmail({ ...data, estado: '✅ Pagado' });
 
   /* Mostrar modal espectacular */
   window.addEventListener('load', () => {
