@@ -1259,7 +1259,7 @@ function submitForm(e){
     nombre, apellido, email, telefono:tel,
     localidad:loc, instagram:ig,
     opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price,
-    estado: 'Pendiente de pago'
+    estado: window._vieneDePago ? '✅ Pagado' : 'Pendiente de pago'
   };
 
   /* Guardar datos en localStorage para confirmar pago después */
@@ -1273,10 +1273,16 @@ function submitForm(e){
   btn.textContent='CONFIRMAR PARTICIPACIÓN →'; btn.disabled=false;
   closeModal('form-overlay');
   document.getElementById('f').reset();
+  window._vieneDePago = false;
 
-  /* Mostrar QR con ID */
-  showQR(pendingIdx, nombre, participId);
-  launchConfetti();
+  /* Si vino del pago → modal verde con ID. Si no → QR para pagar */
+  if(payload.estado === '✅ Pagado'){
+    document.getElementById('paid-id-num').textContent = participId;
+    openModal('paid-overlay');
+    launchConfetti();
+  } else {
+    showQR(pendingIdx, nombre, participId);
+  }
 }
 
 /* ── Show QR ────────────────────────────────────── */
@@ -1361,29 +1367,30 @@ function launchConfetti(){
 
   history.replaceState({}, '', location.pathname);
 
-  const raw = localStorage.getItem('sorteoParticip');
-  if(!raw) return;
-  const data = JSON.parse(raw);
-  localStorage.removeItem('sorteoParticip');
-
-  /* Actualizar planilla a "✅ Pagado" + disparar email con ID */
-  if(CFG.googleSheetUrl && data.id){
-    const url = CFG.googleSheetUrl + '?' + new URLSearchParams({
-      action: 'confirmar', id: data.id
-    }).toString();
-    fetch(url, { mode:'no-cors' }).catch(()=>{});
-  }
-
-  /* Enviar email con ID ahora que el pago está confirmado */
-  sendEmail({ ...data, estado: '✅ Pagado' });
-
-  /* Mostrar modal espectacular */
+  /* Abre el formulario automáticamente después del pago */
   window.addEventListener('load', () => {
-    document.getElementById('paid-id-num').textContent = data.id;
-    openModal('paid-overlay');
-    launchConfetti();
+    /* Guardar que viene del pago para que el submit sepa el estado */
+    window._vieneDePago = true;
+
+    /* Detectar opción por el parámetro op si viene, sino sel=0 */
+    const op = parseInt(params.get('op') || '0');
+    openFormPagado(op);
   });
 })();
+
+function openFormPagado(idx){
+  pendingIdx = idx;
+  sel = idx;
+  const op = OPS[idx];
+  document.getElementById('opt-tag').innerHTML = `
+    <div class="opt-tag">
+      <span>${op.emoji}</span>
+      <span style="color:${op.color};font-weight:700">${op.label}</span>
+      <span style="color:var(--muted)">·</span>
+      <span>${op.price}</span>
+    </div>`;
+  openModal('form-overlay');
+}
 
 /* ── Countdown ──────────────────────────────────── */
 (function(){
