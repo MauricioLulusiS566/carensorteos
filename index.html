@@ -1179,7 +1179,7 @@ function showQR(idx, nombre, participId){
   const op   = OPS[idx];
   const link = CFG.payLinks[idx];
 
-  document.getElementById('qr-name').textContent        = nombre ? `¡LISTO, ${nombre.toUpperCase()}!` : op.label.toUpperCase();
+  document.getElementById('qr-name').textContent        = nombre ? `¡ÚLTIMO PASO, ${nombre.toUpperCase()}!` : op.label.toUpperCase();
   document.getElementById('qr-badge-emoji').textContent = op.emoji;
   document.getElementById('qr-badge-label').textContent = op.label;
   document.getElementById('qr-badge-label').style.color = op.color;
