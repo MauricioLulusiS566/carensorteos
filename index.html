@@ -1257,38 +1257,35 @@ function submitForm(e){
   closeModal('form-overlay');
   document.getElementById('f').reset();
 
-  /* Pedir link único de pago al GAS via JSONP (bypasa CORS) */
-  const cbName = 'cb_' + Date.now();
-  const gasUrl = CFG.googleSheetUrl + '?' + new URLSearchParams({
-    action: 'crearPago', callback: cbName,
+  /* Guardar en planilla via GAS (no necesita respuesta) */
+  const payload = {
     id: participId, fecha: new Date().toLocaleString('es-AR'),
     nombre, apellido, email, telefono: tel,
     localidad: loc, instagram: ig,
-    opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price
-  }).toString();
-
-  const timer = setTimeout(() => {
-    cleanup();
-    alert('Error de conexión. Intentá de nuevo.');
-    btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
-  }, 15000);
-
-  function cleanup(){ delete window[cbName]; if(s.parentNode) s.parentNode.removeChild(s); clearTimeout(timer); }
-
-  window[cbName] = function(data){
-    cleanup();
-    if(data && data.url) {
-      window.location.href = data.url;
-    } else {
-      alert('Error al generar el pago. Intentá de nuevo.');
-      btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
-    }
+    opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price,
+    estado: 'Pendiente de pago'
   };
+  sendToSheet(payload);
 
-  const s = document.createElement('script');
-  s.src = gasUrl;
-  s.onerror = () => { cleanup(); alert('Error. Intentá de nuevo.'); btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false; };
-  document.body.appendChild(s);
+  /* Crear checkout de MP via función Netlify (mismo dominio, sin CORS) */
+  fetch('/.netlify/functions/crear-pago?' + new URLSearchParams({
+    id: participId, email,
+    opcion: OPS[pendingIdx].label,
+    monto: OPS[pendingIdx].price
+  }).toString())
+    .then(r => r.json())
+    .then(data => {
+      if(data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Error al generar el pago. Intentá de nuevo.');
+        btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
+      }
+    })
+    .catch(() => {
+      alert('Error de conexión. Intentá de nuevo.');
+      btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
+    });
 }
 
 /* ── Show QR ────────────────────────────────────── */
