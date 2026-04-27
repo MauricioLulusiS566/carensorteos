@@ -1267,7 +1267,7 @@ function submitForm(e){
   }));
 
   /* Crear checkout de MP via función Netlify (mismo dominio, sin CORS) */
-  fetch('/.netlify/functions/crear-pago?' + new URLSearchParams({
+  fetch('/api/crear-pago?' + new URLSearchParams({
     id: participId, email,
     opcion: OPS[pendingIdx].label,
     monto: OPS[pendingIdx].price
