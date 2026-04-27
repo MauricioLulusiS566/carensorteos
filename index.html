@@ -1257,20 +1257,13 @@ function submitForm(e){
   closeModal('form-overlay');
   document.getElementById('f').reset();
 
-  /* Guardar en planilla via GAS (no necesita respuesta) */
-  const payload = {
+  /* Guardar TODOS los datos en localStorage — nada va a la planilla hasta que paguen */
+  localStorage.setItem('sorteoParticip', JSON.stringify({
     id: participId, fecha: new Date().toLocaleString('es-AR'),
     nombre, apellido, email, telefono: tel,
     localidad: loc, instagram: ig,
     opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price,
-    estado: 'Pendiente de pago'
-  };
-  sendToSheet(payload);
-
-  /* Guardar en localStorage para el email al volver del pago */
-  localStorage.setItem('sorteoEmail', JSON.stringify({
-    id: participId, nombre, email,
-    opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price
+    estado: '✅ Pagado'
   }));
 
   /* Crear checkout de MP via función Netlify (mismo dominio, sin CORS) */
@@ -1381,20 +1374,25 @@ function launchConfetti(){
   window.addEventListener('load', () => {
     if(!confirmarId) return;
 
-    /* Confirmar pago en planilla */
+    /* Leer datos del localStorage */
+    const raw = localStorage.getItem('sorteoParticip');
+    if(raw) {
+      const data = JSON.parse(raw);
+      localStorage.removeItem('sorteoParticip');
+
+      /* Guardar en planilla RECIÉN AHORA que pagó */
+      sendToSheet(data);
+
+      /* Enviar email con EmailJS */
+      sendEmail(data);
+    }
+
+    /* Confirmar en GAS (actualiza estado a ✅ Pagado si ya existe) */
     fetch(CFG.googleSheetUrl + '?' + new URLSearchParams({
       action: 'confirmar', id: confirmarId
     }).toString(), { mode: 'no-cors' }).catch(() => {});
 
-    /* Enviar email con EmailJS si tenemos los datos */
-    const raw = localStorage.getItem('sorteoEmail');
-    if(raw) {
-      const d = JSON.parse(raw);
-      localStorage.removeItem('sorteoEmail');
-      sendEmail({ id: d.id, nombre: d.nombre, email: d.email, opcion: d.opcion, monto: d.monto });
-    }
-
-    /* Mostrar modal verde con el ID */
+    /* Mostrar modal verde */
     document.getElementById('paid-id-num').textContent = confirmarId;
     openModal('paid-overlay');
     launchConfetti();
