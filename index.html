@@ -615,6 +615,81 @@
       transform: translateY(-1px);
     }
 
+    /* ══ PAGO CONFIRMADO MODAL ══ */
+    .paid-body { text-align: center; padding: 8px 0 4px; }
+
+    .paid-check-wrap {
+      width: 90px; height: 90px;
+      margin: 0 auto 20px;
+    }
+    .paid-check {
+      width: 90px; height: 90px;
+    }
+    .paid-check-circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2.5;
+      stroke: #44dd77;
+      fill: none;
+      animation: drawCircle .7s ease forwards;
+    }
+    .paid-check-mark {
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke: #44dd77;
+      fill: none;
+      animation: drawMark .4s ease .7s forwards;
+    }
+    @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+    @keyframes drawMark   { to { stroke-dashoffset: 0; } }
+
+    .paid-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem; letter-spacing: 3px; line-height: 1;
+      margin-bottom: 10px;
+    }
+    .paid-sub {
+      color: var(--muted); font-size: .9rem;
+      line-height: 1.6; margin-bottom: 24px;
+    }
+    .paid-id-box {
+      background: rgba(68,221,119,.07);
+      border: 1px solid rgba(68,221,119,.25);
+      border-radius: 16px; padding: 18px 22px;
+      margin-bottom: 18px;
+    }
+    .paid-id-label {
+      font-size: .65rem; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .paid-id-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem; letter-spacing: 5px;
+      color: #44dd77; line-height: 1;
+    }
+    .paid-date {
+      font-size: .82rem; color: var(--muted);
+      margin-bottom: 24px; line-height: 1.6;
+    }
+    .paid-date strong { color: var(--gold); }
+    .paid-close-btn {
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, #44dd77, #00bb55);
+      border: none; border-radius: 12px;
+      color: #000; font-family: 'Montserrat', sans-serif;
+      font-weight: 900; font-size: .95rem;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .paid-close-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(68,221,119,.4);
+    }
+
     /* Modal éxito */
     .success-body { text-align: center; padding: 10px 0; }
     .success-icon { font-size: 64px; margin-bottom: 12px; }
@@ -833,7 +908,7 @@
           <span class="dot dot-1"></span>
           Tu nombre aparece <strong>&nbsp;1 vez</strong>
         </div>
-        <div class="tcard-price price-1">$8.600</div>
+        <div class="tcard-price price-1">$9.000</div>
         <div class="tcard-currency">PESOS ARGENTINOS</div>
       </div>
       <div class="tcard-footer">
@@ -854,7 +929,7 @@
           <span class="dot dot-2"></span>
           Tu nombre aparece <strong>&nbsp;2 veces</strong>
         </div>
-        <div class="tcard-price price-2">$15.000</div>
+        <div class="tcard-price price-2">$17.000</div>
         <div class="tcard-currency">PESOS ARGENTINOS</div>
       </div>
       <div class="tcard-footer">
@@ -876,7 +951,7 @@
           <span class="dot dot-3"></span>
           Tu nombre aparece <strong>&nbsp;3 veces</strong>
         </div>
-        <div class="tcard-price price-3">$20.500</div>
+        <div class="tcard-price price-3">$25.000</div>
         <div class="tcard-currency">PESOS ARGENTINOS</div>
       </div>
       <div class="tcard-footer">
@@ -1010,6 +1085,37 @@
   </div>
 </div>
 
+<!-- ══════════ PAGO CONFIRMADO MODAL ══════════ -->
+<div class="overlay" id="paid-overlay">
+  <div class="modal">
+    <div class="paid-body">
+
+      <div class="paid-check-wrap">
+        <svg class="paid-check" viewBox="0 0 52 52">
+          <circle class="paid-check-circle" cx="26" cy="26" r="24"/>
+          <path class="paid-check-mark" d="M14 27l8 8 16-17"/>
+        </svg>
+      </div>
+
+      <div class="paid-title gradient-text">¡PAGO<br>CONFIRMADO!</div>
+      <p class="paid-sub">Tu lugar en el sorteo está <strong style="color:#fff">asegurado</strong> 🏆</p>
+
+      <div class="paid-id-box">
+        <p class="paid-id-label">Tu número de participación</p>
+        <div class="paid-id-num" id="paid-id-num">MOTO-XXXXXX</div>
+        <p class="paid-id-label" style="margin-top:6px">Guardalo para el día del sorteo</p>
+      </div>
+
+      <p class="paid-date">Te esperamos el <strong>26 de Mayo 2026</strong> 🍀<br>¡Mucha suerte!</p>
+
+      <button class="paid-close-btn" onclick="closeModal('paid-overlay')">
+        ✅ &nbsp;CERRAR
+      </button>
+
+    </div>
+  </div>
+</div>
+
 <!-- ══════════ FOOTER ══════════ -->
 <footer>
   <p>© 2025 Gran Sorteo · Bases y condiciones disponibles · Organizado en Argentina</p>
@@ -1030,9 +1136,9 @@
    ══════════════════════════════════════════════════════════ */
 const CFG = {
   payLinks: [
-    "https://www.mercadopago.com.ar/payment-link/v1/redirect?link-id=375ebf3b-e82e-405f-a4e7-ccb6864c3526&source=link",
-    "https://www.mercadopago.com.ar/payment-link/v1/redirect?link-id=598120e6-b1a2-4ae5-ab6b-0573593a7081&source=link",
-    "https://mercadopago.com.ar/checkout/v1/payment/redirect/?source=link&preference-id=567015851-0bb3f6ff-3b66-4f61-97fd-54b9c7945137&router-request-id=028c3cfe-a1db-4a20-bdb3-102dad701145",
+    "https://mpago.la/2GaVdZm",   // $9.000 - 1 ticket
+    "https://mpago.la/1f8To6K",   // $17.000 - 2 tickets
+    "https://mpago.la/2yycqjD",   // $25.000 - 3 tickets
   ],
   googleSheetUrl: "https://script.google.com/macros/s/AKfycbxWR-LiohFB5G1-SkOtqGudAUmOeRmZ-ctXebgtxQ4eSNRKuVd7Q9kh4FYDbmYuY7e7ig/exec",
 
@@ -1046,9 +1152,9 @@ const CFG = {
 
 /* ── Opciones ─────────────────────────────────────── */
 const OPS = [
-  { label:"1 Ticket",  price:"$8.600",  color:"#cd7f32", emoji:"🥉" },
-  { label:"2 Tickets", price:"$15.000", color:"#bdbdbd", emoji:"🥈" },
-  { label:"3 Tickets", price:"$20.500", color:"#ffd700", emoji:"🏆" },
+  { label:"1 Ticket",  price:"$9.000",  color:"#cd7f32", emoji:"🥉" },
+  { label:"2 Tickets", price:"$17.000", color:"#bdbdbd", emoji:"🥈" },
+  { label:"3 Tickets", price:"$25.000", color:"#ffd700", emoji:"🏆" },
 ];
 
 let sel = 0;
@@ -1163,6 +1269,11 @@ function submitForm(e){
     estado: 'Pendiente de pago'
   };
 
+  /* Guardar datos en localStorage para confirmar pago después */
+  localStorage.setItem('sorteoParticip', JSON.stringify({
+    id: participId, nombre, opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price
+  }));
+
   /* Guardar en planilla + enviar email */
   sendToSheet(payload);
   sendEmail(payload);
@@ -1253,6 +1364,34 @@ function launchConfetti(){
   })();
 }
 
+/* ── Detectar redirect de MercadoPago ───────────── */
+(function(){
+  const params = new URLSearchParams(location.search);
+  if(params.get('pagado') !== '1') return;
+
+  history.replaceState({}, '', location.pathname);
+
+  const raw = localStorage.getItem('sorteoParticip');
+  if(!raw) return;
+  const data = JSON.parse(raw);
+  localStorage.removeItem('sorteoParticip');
+
+  /* Actualizar planilla a "✅ Pagado" */
+  if(CFG.googleSheetUrl && data.id){
+    const url = CFG.googleSheetUrl + '?' + new URLSearchParams({
+      action: 'confirmar', id: data.id
+    }).toString();
+    fetch(url, { mode:'no-cors' }).catch(()=>{});
+  }
+
+  /* Mostrar modal espectacular */
+  window.addEventListener('load', () => {
+    document.getElementById('paid-id-num').textContent = data.id;
+    openModal('paid-overlay');
+    launchConfetti();
+  });
+})();
+
 /* ── Countdown ──────────────────────────────────── */
 (function(){
   const target = new Date('2026-05-26T12:00:00-03:00');
@@ -1295,6 +1434,61 @@ shakeStyle.textContent = `
 }`;
 document.head.appendChild(shakeStyle);
 </script>
+
+<!--
+════════════════════════════════════════════════════════
+  APPS SCRIPT ACTUALIZADO — PEGAR EN EXTENSIONES → APPS SCRIPT
+════════════════════════════════════════════════════════
+
+  function doGet(e) {
+    if (e.parameter.action === 'confirmar') {
+      const sheet = SpreadsheetApp
+        .openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8')
+        .getActiveSheet();
+      const id = e.parameter.id;
+      const rows = sheet.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i][0] === id) {
+          sheet.getRange(i + 1, 12).setValue('✅ Pagado');
+          break;
+        }
+      }
+      return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
+    }
+    return handleData(e);
+  }
+
+  function doPost(e) { return handleData(e); }
+
+  function handleData(e) {
+    const sheet = SpreadsheetApp
+      .openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8')
+      .getActiveSheet();
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['ID','Fecha','Nombre','Apellido','Email','Telefono',
+        'Localidad','Instagram','Opcion','Monto','Estado']);
+    }
+    const p = e.parameter;
+    sheet.appendRow([p.id, p.fecha, p.nombre, p.apellido, p.email, p.telefono,
+      p.localidad, p.instagram, p.opcion, p.monto, p.estado]);
+    try {
+      MailApp.sendEmail({
+        to: p.email,
+        subject: 'Participacion registrada! ID: ' + p.id + ' - Gran Sorteo Moto 0km',
+        htmlBody: '<h2>Hola ' + p.nombre + '!</h2><p>Tu ID: <strong>' + p.id + '</strong></p><p>Opcion: ' + p.opcion + ' - ' + p.monto + '</p><p>Sorteo: 26 de Mayo 2026</p>'
+      });
+    } catch(err) { Logger.log(err); }
+    return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
+  }
+
+  ⚠️ Guardá, hacé NUEVA implementación y actualizá la URL en googleSheetUrl.
+
+  MERCADOPAGO — URL DE RETORNO:
+  Editá cada link de pago en MP y poné como URL de retorno:
+  https://carensorteos.com?pagado=1
+
+════════════════════════════════════════════════════════
+-->
 
 
 </body>
