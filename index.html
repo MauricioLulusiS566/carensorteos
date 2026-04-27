@@ -1002,7 +1002,7 @@
         <label>Email *</label>
         <input id="fi-email" type="email" placeholder="juan@gmail.com" required />
       </div>
-      <button type="submit" class="submit-btn" id="sbtn">CONFIRMAR PARTICIPACIÓN →</button>
+      <button type="submit" class="submit-btn" id="sbtn">💳 IR AL PAGO →</button>
     </form>
   </div>
 </div>
@@ -1253,36 +1253,23 @@ function submitForm(e){
   const btn = document.getElementById('sbtn');
   btn.textContent='Enviando…'; btn.disabled=true;
 
-  const payload = {
+  /* Guardar todos los datos en localStorage — se registran SOLO cuando pagan */
+  localStorage.setItem('sorteoParticip', JSON.stringify({
     id: participId,
     fecha: new Date().toLocaleString('es-AR'),
-    nombre, apellido, email, telefono:tel,
-    localidad:loc, instagram:ig,
-    opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price,
-    estado: window._vieneDePago ? '✅ Pagado' : 'Pendiente de pago'
-  };
-
-  /* Guardar datos en localStorage para confirmar pago después */
-  localStorage.setItem('sorteoParticip', JSON.stringify({
-    id: participId, nombre, opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price
+    nombre, apellido, email, telefono: tel,
+    localidad: loc, instagram: ig,
+    opcion: OPS[pendingIdx].label,
+    monto: OPS[pendingIdx].price,
+    estado: '✅ Pagado'
   }));
 
-  /* Guardar en planilla (email se envía recién cuando paga) */
-  sendToSheet(payload);
-
-  btn.textContent='CONFIRMAR PARTICIPACIÓN →'; btn.disabled=false;
+  btn.textContent='IR AL PAGO →'; btn.disabled=false;
   closeModal('form-overlay');
   document.getElementById('f').reset();
-  window._vieneDePago = false;
 
-  /* Si vino del pago → modal verde con ID. Si no → QR para pagar */
-  if(payload.estado === '✅ Pagado'){
-    document.getElementById('paid-id-num').textContent = participId;
-    openModal('paid-overlay');
-    launchConfetti();
-  } else {
-    showQR(pendingIdx, nombre, participId);
-  }
+  /* Ir directo al link de pago de MP */
+  window.location.href = CFG.payLinks[pendingIdx];
 }
 
 /* ── Show QR ────────────────────────────────────── */
@@ -1367,14 +1354,20 @@ function launchConfetti(){
 
   history.replaceState({}, '', location.pathname);
 
-  /* Abre el formulario automáticamente después del pago */
   window.addEventListener('load', () => {
-    /* Guardar que viene del pago para que el submit sepa el estado */
-    window._vieneDePago = true;
+    const raw = localStorage.getItem('sorteoParticip');
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    localStorage.removeItem('sorteoParticip');
 
-    /* Detectar opción por el parámetro op si viene, sino sel=0 */
-    const op = parseInt(params.get('op') || '0');
-    openFormPagado(op);
+    /* Registrar en planilla + enviar email ahora que pagó */
+    sendToSheet(data);
+    sendEmail(data);
+
+    /* Mostrar modal de pago confirmado */
+    document.getElementById('paid-id-num').textContent = data.id;
+    openModal('paid-overlay');
+    launchConfetti();
   });
 })();
 
