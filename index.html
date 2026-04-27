@@ -1133,7 +1133,7 @@ const CFG = {
     "https://mpago.la/1f8To6K",   // $17.000 - 2 tickets
     "https://mpago.la/2yycqjD",   // $25.000 - 3 tickets
   ],
-  googleSheetUrl: "https://script.google.com/macros/s/AKfycbyVUh_MCrJhBnpDF-mfdGRaIun6dkLxf0FGA9u3lRWuIP5kqle-kTEX3b4u8PuLTKXegA/exec",
+  googleSheetUrl: "https://script.google.com/macros/s/AKfycbw9FICER6A4LAiNtciveoYuLVM6GrNNHRXj30QLdPFmy7eFjaKSeLp86EvxQSo0Kmmu_Q/exec",
 
   // ── EmailJS (para enviar el email al participante) ──
   emailjs: {
@@ -1257,31 +1257,38 @@ function submitForm(e){
   closeModal('form-overlay');
   document.getElementById('f').reset();
 
-  /* Pedir link único de pago al GAS */
+  /* Pedir link único de pago al GAS via JSONP (bypasa CORS) */
+  const cbName = 'cb_' + Date.now();
   const gasUrl = CFG.googleSheetUrl + '?' + new URLSearchParams({
-    action: 'crearPago',
-    id: participId,
-    fecha: new Date().toLocaleString('es-AR'),
+    action: 'crearPago', callback: cbName,
+    id: participId, fecha: new Date().toLocaleString('es-AR'),
     nombre, apellido, email, telefono: tel,
     localidad: loc, instagram: ig,
-    opcion: OPS[pendingIdx].label,
-    monto: OPS[pendingIdx].price
+    opcion: OPS[pendingIdx].label, monto: OPS[pendingIdx].price
   }).toString();
 
-  fetch(gasUrl)
-    .then(r => r.json())
-    .then(data => {
-      if(data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Error al generar el pago. Intentá de nuevo.');
-        btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
-      }
-    })
-    .catch(() => {
-      alert('Error de conexión. Intentá de nuevo.');
+  const timer = setTimeout(() => {
+    cleanup();
+    alert('Error de conexión. Intentá de nuevo.');
+    btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
+  }, 15000);
+
+  function cleanup(){ delete window[cbName]; if(s.parentNode) s.parentNode.removeChild(s); clearTimeout(timer); }
+
+  window[cbName] = function(data){
+    cleanup();
+    if(data && data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Error al generar el pago. Intentá de nuevo.');
       btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false;
-    });
+    }
+  };
+
+  const s = document.createElement('script');
+  s.src = gasUrl;
+  s.onerror = () => { cleanup(); alert('Error. Intentá de nuevo.'); btn.textContent = '💳 IR AL PAGO →'; btn.disabled = false; };
+  document.body.appendChild(s);
 }
 
 /* ── Show QR ────────────────────────────────────── */
