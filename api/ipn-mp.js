@@ -1,5 +1,5 @@
 const MP_TOKEN = 'APP_USR-5948561016629947-042709-8234f9d46d2db8b086f7211c567be26c-567015851';
-const GAS_URL  = 'https://script.google.com/macros/s/AKfycbzb-6PLBkNBFWFKH6QLtS2fmrvTJhdC_a1Orp-st0yA63xsR51Tv01VlQEAmaNQGa4hpQ/exec';
+const GAS_URL  = 'https://script.google.com/macros/s/AKfycbzplujv7KkRkIEOvy28o2XS_p7XLgnamjfc4WYIvMa3iTYszydU-cmPtiXkRAlcr-irlg/exec';
 
 module.exports = async (req, res) => {
   try {
