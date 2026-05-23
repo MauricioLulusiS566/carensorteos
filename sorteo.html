@@ -275,23 +275,79 @@
       pointer-events: none; z-index: 600;
     }
 
-    /* ── MANUAL ADD ── */
-    .manual-section { margin-top: 14px; }
-    .manual-row { display: flex; gap: 8px; }
-    .manual-input {
-      flex: 1; background: rgba(255,255,255,.05);
+    /* ── TABLA PARTICIPANTES ── */
+    .tabla-section {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+    .tabla-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .tabla-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: 2px; color: var(--gold);
+    }
+    .tabla-stats {
+      display: flex; gap: 16px;
+    }
+    .stat-chip {
+      background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.1);
-      border-radius: 10px; padding: 10px 14px;
-      color: #fff; font-size: .85rem;
-      font-family: 'Montserrat', sans-serif; outline: none;
+      border-radius: 50px; padding: 6px 14px;
+      font-size: .75rem; font-weight: 700; letter-spacing: 1px;
     }
-    .manual-input:focus { border-color: var(--orange); }
-    .manual-add-btn {
-      padding: 10px 16px; border-radius: 10px;
-      background: var(--orange); border: none;
-      color: #000; font-weight: 900; font-size: 1.1rem;
-      cursor: pointer;
+    .tabla-search {
+      width: 100%; background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: 12px 16px;
+      color: #fff; font-family: 'Montserrat', sans-serif;
+      font-size: .9rem; outline: none; margin-bottom: 14px;
+      transition: border-color .2s;
     }
+    .tabla-search:focus { border-color: var(--orange); }
+    .tabla-wrap {
+      background: var(--card); border: 1px solid #1a1a1a;
+      border-radius: 16px; overflow: hidden;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+    }
+    thead tr {
+      background: #161616;
+      border-bottom: 1px solid #222;
+    }
+    thead th {
+      padding: 12px 16px; text-align: left;
+      font-size: .7rem; letter-spacing: 2px;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+      font-weight: 700;
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.03); }
+    tbody td {
+      padding: 12px 16px; font-size: .85rem;
+    }
+    .td-id {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: .9rem; letter-spacing: 2px; color: var(--green);
+    }
+    .td-nombre { font-weight: 700; }
+    .td-ig { color: var(--orange); }
+    .td-opcion {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .badge-1 { background: rgba(205,127,50,.2); color: #cd7f32; border-radius: 20px; padding: 2px 10px; font-size: .72rem; font-weight: 700; }
+    .badge-2 { background: rgba(189,189,189,.2); color: #bdbdbd; border-radius: 20px; padding: 2px 10px; font-size: .72rem; font-weight: 700; }
+    .badge-3 { background: rgba(255,215,0,.2); color: var(--gold); border-radius: 20px; padding: 2px 10px; font-size: .72rem; font-weight: 700; }
+    .td-monto { font-weight: 700; color: var(--gold); }
+    .tabla-empty { text-align: center; padding: 40px; color: rgba(255,255,255,.3); font-size: .85rem; }
 
     /* Loading */
     .loading-txt { color: rgba(255,255,255,.4); font-size: .8rem; text-align: center; padding: 20px; }
@@ -321,23 +377,17 @@
 
   <div class="sorteo-layout">
 
-    <!-- Panel participantes -->
+    <!-- Panel control -->
     <div>
       <div class="panel">
-        <div class="panel-title">PARTICIPANTES</div>
+        <div class="panel-title">CONTROL</div>
         <div class="panel-count" id="count-txt">0 inscriptos cargados</div>
         <div class="panel-list" id="participant-list">
-          <div class="loading-txt">Cargá los participantes →</div>
+          <div class="loading-txt">Presioná "Cargar" →</div>
         </div>
-        <button class="load-btn" onclick="cargarDesideSheet()">
+        <button class="load-btn" id="load-btn" onclick="cargarDesideSheet()">
           📊 CARGAR DESDE PLANILLA
         </button>
-        <div class="manual-section">
-          <div class="manual-row">
-            <input class="manual-input" id="manual-name" placeholder="Nombre / Instagram" onkeydown="if(event.key==='Enter')agregarManual()" />
-            <button class="manual-add-btn" onclick="agregarManual()">+</button>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -362,6 +412,35 @@
       <p class="arena-hint" id="arena-hint">Cargá los participantes para comenzar</p>
 
     </div>
+  </div>
+</div>
+
+<!-- ── TABLA ── -->
+<div class="tabla-section" id="tabla-section" style="display:none">
+  <div class="tabla-header">
+    <div class="tabla-title">📋 PARTICIPANTES CARGADOS</div>
+    <div class="tabla-stats">
+      <div class="stat-chip" id="stat-personas">0 personas</div>
+      <div class="stat-chip" id="stat-boletos">0 boletos</div>
+    </div>
+  </div>
+  <input class="tabla-search" id="tabla-search" placeholder="🔍 Buscar por nombre, Instagram o ID..." oninput="filtrarTabla()" />
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Instagram</th>
+          <th>Opción</th>
+          <th>Monto</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body">
+        <tr><td colspan="6" class="tabla-empty">Sin datos</td></tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -401,63 +480,98 @@ function checkPwd() {
   }
 }
 
+/* ── PARTICIPANTES ÚNICOS (sin duplicados de tickets múltiples) ── */
+let participantesUnicos = [];
+
 /* ── CARGAR DESDE SHEET ── */
 async function cargarDesideSheet() {
-  const btn = document.querySelector('.load-btn');
+  const btn = document.getElementById('load-btn');
   btn.textContent = '⏳ Cargando...'; btn.disabled = true;
   try {
-    const url = GAS_URL + '?action=participantes';
-    const r   = await fetch(url);
+    const r    = await fetch(GAS_URL + '?action=participantes');
     const data = await r.json();
     if (!Array.isArray(data) || data.length === 0) {
-      alert('No hay participantes con pago confirmado en la planilla.');
+      alert('No hay participantes en la solapa "Personas que pagaron".');
       return;
     }
     participantes = data;
+    // Únicos para la tabla (sin repetir por múltiples tickets)
+    const seen = new Set();
+    participantesUnicos = data.filter(p => { if(seen.has(p.id)) return false; seen.add(p.id); return true; });
     renderParticipantes();
+    renderTabla(participantesUnicos);
   } catch(err) {
-    alert('Error al cargar. Ingresalos manualmente.');
+    alert('Error al cargar. Verificá la conexión.');
     console.error(err);
   } finally {
-    btn.textContent = '📊 CARGAR DESDE PLANILLA';
+    btn.textContent = '🔄 ACTUALIZAR';
     btn.disabled = false;
   }
 }
 
-/* ── AGREGAR MANUAL ── */
-function agregarManual() {
-  const input = document.getElementById('manual-name');
-  const nombre = input.value.trim();
-  if (!nombre) return;
-  participantes.push({ id: 'MANUAL', nombre, instagram: '', opcion: '1 Ticket' });
-  renderParticipantes();
-  input.value = '';
-  input.focus();
-}
-
-/* ── RENDER ── */
+/* ── RENDER PANEL ── */
 function renderParticipantes() {
   const list  = document.getElementById('participant-list');
   const count = document.getElementById('count-txt');
   const btn   = document.getElementById('sortear-btn');
   const hint  = document.getElementById('arena-hint');
+  const unicos = participantesUnicos.length;
+  const boletos = participantes.length;
 
-  count.textContent = participantes.length + ' inscriptos cargados';
+  count.textContent = `${unicos} personas · ${boletos} boletos`;
   btn.disabled = participantes.length === 0;
   hint.textContent = participantes.length > 0
-    ? `${participantes.length} participantes listos · Presioná SORTEAR`
+    ? `${boletos} boletos en juego · Presioná SORTEAR`
     : 'Cargá los participantes para comenzar';
 
-  list.innerHTML = participantes.map((p, i) => `
+  list.innerHTML = participantesUnicos.map((p, i) => `
     <div class="participant-item">
       <span class="num">${i + 1}</span>
       <div class="info">
         <div class="name">${p.nombre}</div>
         <div class="ig">${p.instagram || p.id}</div>
       </div>
-      <span class="ticket-badge">${p.opcion || '1T'}</span>
+      <span class="ticket-badge">${p.opcion}</span>
     </div>
   `).join('');
+}
+
+/* ── RENDER TABLA ── */
+let tablaFiltrada = [];
+
+function renderTabla(data) {
+  tablaFiltrada = data;
+  document.getElementById('tabla-section').style.display = 'block';
+  document.getElementById('stat-personas').textContent = data.length + ' personas';
+  document.getElementById('stat-boletos').textContent  = participantes.length + ' boletos';
+
+  const badgeClass = op => op.includes('3') ? 'badge-3' : op.includes('2') ? 'badge-2' : 'badge-1';
+
+  const tbody = document.getElementById('tabla-body');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="tabla-empty">Sin resultados</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((p, i) => `
+    <tr>
+      <td style="color:rgba(255,255,255,.3);font-size:.75rem">${i + 1}</td>
+      <td class="td-id">${p.id}</td>
+      <td class="td-nombre">${p.nombre}</td>
+      <td class="td-ig">${p.instagram ? '@'+p.instagram.replace('@','') : '—'}</td>
+      <td><span class="${badgeClass(p.opcion)}">${p.opcion}</span></td>
+      <td class="td-monto">${p.monto}</td>
+    </tr>
+  `).join('');
+}
+
+function filtrarTabla() {
+  const q = document.getElementById('tabla-search').value.toLowerCase();
+  const filtered = participantesUnicos.filter(p =>
+    p.nombre.toLowerCase().includes(q) ||
+    (p.instagram || '').toLowerCase().includes(q) ||
+    p.id.toLowerCase().includes(q)
+  );
+  renderTabla(filtered);
 }
 
 /* ── SORTEO ANIMADO ── */
