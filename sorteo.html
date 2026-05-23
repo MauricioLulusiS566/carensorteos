@@ -351,6 +351,68 @@
 
     /* Loading */
     .loading-txt { color: rgba(255,255,255,.4); font-size: .8rem; text-align: center; padding: 20px; }
+
+    /* ── COUNTDOWN ── */
+    #countdown-overlay {
+      position: fixed; inset: 0;
+      display: none; align-items: center; justify-content: center;
+      background: #000; z-index: 700; overflow: hidden;
+    }
+    #countdown-overlay.active { display: flex; }
+
+    .cnt-flash {
+      position: absolute; inset: 0; pointer-events: none;
+      opacity: 0;
+    }
+
+    .cnt-rings {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .cnt-ring {
+      position: absolute; border-radius: 50%;
+      border: 3px solid; opacity: 0;
+    }
+    @keyframes ringExpand {
+      0%   { transform: scale(.3); opacity: .9; }
+      100% { transform: scale(3);  opacity: 0; }
+    }
+    .cnt-ring.pop {
+      animation: ringExpand .9s cubic-bezier(.2,.6,.4,1) forwards;
+    }
+    .cnt-ring-1 { width: 55vmin; height: 55vmin; }
+    .cnt-ring-2 { width: 35vmin; height: 35vmin; }
+    .cnt-ring-3 { width: 18vmin; height: 18vmin; }
+
+    @keyframes cntSlam {
+      0%   { transform: scale(4);    opacity: 0; filter: blur(40px); }
+      14%  { transform: scale(.88);  opacity: 1; filter: blur(0);    }
+      30%  { transform: scale(1.04); opacity: 1; filter: blur(0);    }
+      55%  { transform: scale(1);    opacity: 1; filter: blur(0);    }
+      80%  { transform: scale(1);    opacity: 1; }
+      100% { transform: scale(.25);  opacity: 0; filter: blur(30px); }
+    }
+    .cnt-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52vmin; line-height: 1;
+      position: relative; z-index: 2;
+      opacity: 0;
+    }
+    .cnt-number.slam {
+      animation: cntSlam 1.05s cubic-bezier(.2,0,.2,1) forwards;
+    }
+
+    @keyframes flashPop {
+      0%   { opacity: .5; }
+      100% { opacity: 0; }
+    }
+    .cnt-flash.pop { animation: flashPop .5s ease-out forwards; }
+
+    @keyframes cntFinalFlash {
+      0%   { opacity: 1; }
+      100% { opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -442,6 +504,17 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<!-- Countdown overlay -->
+<div id="countdown-overlay">
+  <div class="cnt-flash"  id="cnt-flash"></div>
+  <div class="cnt-rings">
+    <div class="cnt-ring cnt-ring-1" id="cnt-r1"></div>
+    <div class="cnt-ring cnt-ring-2" id="cnt-r2"></div>
+    <div class="cnt-ring cnt-ring-3" id="cnt-r3"></div>
+  </div>
+  <div class="cnt-number" id="cnt-number">3</div>
 </div>
 
 <!-- Ganador overlay -->
@@ -574,6 +647,74 @@ function filtrarTabla() {
   renderTabla(filtered);
 }
 
+/* ── COUNTDOWN ── */
+function mostrarCountdown(callback) {
+  const overlay = document.getElementById('countdown-overlay');
+  const numEl   = document.getElementById('cnt-number');
+  const flash   = document.getElementById('cnt-flash');
+  const rings   = [
+    document.getElementById('cnt-r1'),
+    document.getElementById('cnt-r2'),
+    document.getElementById('cnt-r3'),
+  ];
+
+  const pasos = [
+    { n: '3', color: '#ffffff', rgb: '220,220,255', bg: 'rgba(180,180,255,.18)' },
+    { n: '2', color: '#ff6a00', rgb: '255,106,0',   bg: 'rgba(255,106,0,.22)'  },
+    { n: '1', color: '#ffd700', rgb: '255,215,0',   bg: 'rgba(255,215,0,.28)'  },
+  ];
+
+  overlay.classList.add('active');
+  let i = 0;
+
+  function showPaso() {
+    if (i >= pasos.length) {
+      /* Flash blanco final → arrancar */
+      flash.style.cssText = `background:#fff;opacity:1;transition:none;`;
+      setTimeout(() => {
+        flash.style.cssText = `background:#fff;opacity:0;transition:opacity .35s;`;
+        setTimeout(() => {
+          overlay.classList.remove('active');
+          callback();
+        }, 360);
+      }, 80);
+      return;
+    }
+
+    const p = pasos[i];
+
+    /* Número */
+    numEl.style.color = p.color;
+    numEl.style.textShadow = `
+      0 0 60px  rgba(${p.rgb},.9),
+      0 0 120px rgba(${p.rgb},.6),
+      0 0 240px rgba(${p.rgb},.35)`;
+    numEl.textContent = p.n;
+    numEl.classList.remove('slam');
+    void numEl.offsetWidth;
+    numEl.classList.add('slam');
+
+    /* Flash de fondo */
+    flash.style.cssText = `background:${p.bg};`;
+    flash.classList.remove('pop');
+    void flash.offsetWidth;
+    flash.classList.add('pop');
+
+    /* Rings */
+    rings.forEach(r => {
+      r.style.borderColor = p.color;
+      r.classList.remove('pop');
+      void r.offsetWidth;
+      r.classList.add('pop');
+    });
+
+    i++;
+    setTimeout(showPaso, 1100);
+  }
+
+  showPaso();
+}
+
 /* ── SORTEO ANIMADO ── */
 let sorteando = false;
 
@@ -581,26 +722,29 @@ function iniciarSorteo() {
   if (sorteando || participantes.length === 0) return;
   sorteando = true;
   document.getElementById('sortear-btn').disabled = true;
-  document.getElementById('arena-hint').textContent = '🎰 Sorteando...';
+  document.getElementById('arena-hint').textContent = '⏳ Preparando sorteo...';
 
   const ganador = participantes[Math.floor(Math.random() * participantes.length)];
 
-  const slotNames  = document.getElementById('slot-names');
-  let speed        = 40;
-  let totalFrames  = 0;
-  const totalTime  = 4000;
-  let elapsed      = 0;
-  let lastTime     = null;
-  let idx          = 0;
+  mostrarCountdown(() => iniciarSlotMachine(ganador));
+}
+
+function iniciarSlotMachine(ganador) {
+  document.getElementById('arena-hint').textContent = '🎰 Sorteando...';
+
+  const slotNames = document.getElementById('slot-names');
+  const totalTime = 4000;
+  let elapsed     = 0;
+  let lastTime    = null;
+  let idx         = 0;
 
   function buildNames(winner) {
     const shuffled = [...participantes].sort(() => Math.random() - .5);
-    const names    = [...shuffled, ...shuffled, ...shuffled, winner];
-    return names;
+    return [...shuffled, ...shuffled, ...shuffled, winner];
   }
 
-  const names = buildNames(ganador);
-  let nameIdx = 0;
+  const names   = buildNames(ganador);
+  let nameIdx   = 0;
 
   function tick(ts) {
     if (!lastTime) lastTime = ts;
@@ -608,9 +752,9 @@ function iniciarSorteo() {
     elapsed += dt;
     lastTime = ts;
 
-    const progress  = elapsed / totalTime;
-    const eased     = progress < 0.7 ? 1 : 1 - Math.pow((progress - 0.7) / 0.3, 2);
-    const interval  = 40 + (1 - eased) * 360;
+    const progress = elapsed / totalTime;
+    const eased    = progress < 0.7 ? 1 : 1 - Math.pow((progress - 0.7) / 0.3, 2);
+    const interval = 40 + (1 - eased) * 360;
 
     idx += dt;
     if (idx >= interval) {
