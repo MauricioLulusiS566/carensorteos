@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sorteo en Vivo 🏍️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #ff6a00;
+      --gold: #ffd700;
+      --dark: #080808;
+      --card: #111;
+      --green: #44dd77;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--dark);
+      color: #f5f5f5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── CONTRASEÑA ── */
+    #lock-screen {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--dark); z-index: 999;
+    }
+    .lock-card {
+      background: #111; border: 1px solid #222;
+      border-radius: 24px; padding: 48px 40px;
+      width: 100%; max-width: 380px; text-align: center;
+    }
+    .lock-icon { font-size: 52px; margin-bottom: 16px; }
+    .lock-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem; letter-spacing: 3px;
+      background: linear-gradient(135deg,#fff,var(--gold),var(--orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 8px;
+    }
+    .lock-sub { color: rgba(255,255,255,.4); font-size: .85rem; margin-bottom: 28px; }
+    .lock-input {
+      width: 100%; background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px; padding: 14px 18px;
+      color: #fff; font-size: 1rem; font-family: 'Montserrat', sans-serif;
+      outline: none; text-align: center; letter-spacing: 3px;
+      transition: border-color .2s;
+    }
+    .lock-input:focus { border-color: var(--orange); }
+    .lock-btn {
+      width: 100%; margin-top: 16px; padding: 15px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      border: none; border-radius: 12px;
+      color: #000; font-family: 'Montserrat', sans-serif;
+      font-weight: 900; font-size: 1rem; letter-spacing: 2px;
+      text-transform: uppercase; cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .lock-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255,106,0,.4); }
+    .lock-error { color: #ff4444; font-size: .8rem; margin-top: 10px; display: none; }
+
+    /* ── MAIN ── */
+    #main { display: none; }
+
+    /* ── HEADER ── */
+    .sorteo-header {
+      text-align: center; padding: 40px 20px 20px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .sorteo-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      letter-spacing: 5px; line-height: 1;
+      background: linear-gradient(135deg,#fff,var(--gold),var(--orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sorteo-header p { color: rgba(255,255,255,.4); font-size: .85rem; letter-spacing: 2px; margin-top: 6px; }
+
+    /* ── LAYOUT ── */
+    .sorteo-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      padding: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    @media(max-width: 700px) {
+      .sorteo-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── PANEL PARTICIPANTES ── */
+    .panel {
+      background: var(--card); border: 1px solid #1a1a1a;
+      border-radius: 20px; padding: 20px;
+      max-height: 600px; display: flex; flex-direction: column;
+    }
+    .panel-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: 2px;
+      color: var(--gold); margin-bottom: 4px;
+    }
+    .panel-count { font-size: .75rem; color: rgba(255,255,255,.4); margin-bottom: 14px; }
+    .panel-list {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .panel-list::-webkit-scrollbar { width: 4px; }
+    .panel-list::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+    .participant-item {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px; padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .participant-item .num {
+      font-size: .7rem; color: rgba(255,255,255,.3);
+      font-weight: 700; min-width: 22px;
+    }
+    .participant-item .info { flex: 1; min-width: 0; }
+    .participant-item .name { font-size: .85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .participant-item .ig { font-size: .72rem; color: rgba(255,255,255,.4); }
+    .ticket-badge {
+      font-size: .65rem; padding: 2px 8px;
+      border-radius: 20px; font-weight: 700;
+      background: rgba(255,215,0,.15); color: var(--gold);
+    }
+    .load-btn {
+      margin-top: 14px; width: 100%; padding: 11px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px; color: #fff;
+      font-family: 'Montserrat', sans-serif; font-weight: 700;
+      font-size: .8rem; cursor: pointer; letter-spacing: 1px;
+      text-transform: uppercase; transition: background .2s;
+    }
+    .load-btn:hover { background: rgba(255,255,255,.1); }
+
+    /* ── ARENA ── */
+    .arena {
+      background: var(--card); border: 1px solid #1a1a1a;
+      border-radius: 20px; padding: 32px 24px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 500px; gap: 28px;
+      position: relative; overflow: hidden;
+    }
+
+    /* Slot machine */
+    .slot-wrapper {
+      width: 100%; max-width: 500px;
+      background: #0a0a0a; border: 2px solid #222;
+      border-radius: 20px; padding: 12px;
+      position: relative; overflow: hidden;
+    }
+    .slot-window {
+      height: 100px; overflow: hidden;
+      position: relative; border-radius: 12px;
+    }
+    .slot-names {
+      display: flex; flex-direction: column;
+      gap: 0; transition: none;
+    }
+    .slot-name {
+      height: 100px; display: flex;
+      align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      letter-spacing: 3px; text-align: center;
+      padding: 0 16px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .slot-glow-top, .slot-glow-bottom {
+      position: absolute; left: 0; right: 0; height: 30px;
+      z-index: 2; pointer-events: none;
+    }
+    .slot-glow-top { top: 0; background: linear-gradient(to bottom, #0a0a0a, transparent); }
+    .slot-glow-bottom { bottom: 0; background: linear-gradient(to top, #0a0a0a, transparent); }
+    .slot-border {
+      position: absolute; left: 0; right: 0; top: 50%;
+      transform: translateY(-50%); height: 100px;
+      border-top: 2px solid var(--orange);
+      border-bottom: 2px solid var(--orange);
+      pointer-events: none; z-index: 3;
+    }
+
+    /* Sortear button */
+    .sortear-btn {
+      padding: 20px 60px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      border: none; border-radius: 16px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem; letter-spacing: 4px;
+      color: #000; cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      animation: btnPulse 2s infinite;
+    }
+    @keyframes btnPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,106,0,.5); }
+      50% { box-shadow: 0 0 0 16px rgba(255,106,0,0); }
+    }
+    .sortear-btn:hover { transform: scale(1.04); }
+    .sortear-btn:disabled { opacity: .5; cursor: not-allowed; animation: none; transform: none; }
+
+    .arena-hint { font-size: .8rem; color: rgba(255,255,255,.3); letter-spacing: 1px; }
+
+    /* ── GANADOR OVERLAY ── */
+    #winner-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.92);
+      backdrop-filter: blur(16px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 500; padding: 20px;
+    }
+    #winner-overlay.show { display: flex; }
+    .winner-card {
+      background: #0f0f0f;
+      border: 2px solid var(--gold);
+      border-radius: 28px; padding: 48px 40px;
+      text-align: center; max-width: 520px; width: 100%;
+      position: relative;
+      animation: winnerPop .5s cubic-bezier(.25,.46,.45,.94);
+    }
+    @keyframes winnerPop {
+      from { transform: scale(.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .winner-crown { font-size: 64px; margin-bottom: 8px; }
+    .winner-label {
+      font-size: .75rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--orange); font-weight: 700; margin-bottom: 12px;
+    }
+    .winner-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      letter-spacing: 3px; line-height: 1.1;
+      background: linear-gradient(135deg, #fff, var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 8px;
+    }
+    .winner-ig {
+      font-size: 1.1rem; color: var(--orange);
+      font-weight: 700; margin-bottom: 6px;
+    }
+    .winner-id {
+      display: inline-block;
+      background: rgba(68,221,119,.1);
+      border: 1px solid rgba(68,221,119,.3);
+      border-radius: 50px; padding: 6px 20px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: 4px;
+      color: var(--green); margin-bottom: 28px;
+    }
+    .winner-opcion {
+      font-size: .82rem; color: rgba(255,255,255,.4);
+      margin-bottom: 28px;
+    }
+    .winner-close {
+      padding: 14px 40px; border-radius: 12px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+      color: #fff; font-family: 'Montserrat', sans-serif;
+      font-weight: 700; font-size: .9rem; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer;
+      transition: background .2s;
+    }
+    .winner-close:hover { background: rgba(255,255,255,.15); }
+
+    /* Confetti canvas */
+    #confetti-sorteo {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 600;
+    }
+
+    /* ── MANUAL ADD ── */
+    .manual-section { margin-top: 14px; }
+    .manual-row { display: flex; gap: 8px; }
+    .manual-input {
+      flex: 1; background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 10px 14px;
+      color: #fff; font-size: .85rem;
+      font-family: 'Montserrat', sans-serif; outline: none;
+    }
+    .manual-input:focus { border-color: var(--orange); }
+    .manual-add-btn {
+      padding: 10px 16px; border-radius: 10px;
+      background: var(--orange); border: none;
+      color: #000; font-weight: 900; font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    /* Loading */
+    .loading-txt { color: rgba(255,255,255,.4); font-size: .8rem; text-align: center; padding: 20px; }
+  </style>
+</head>
+<body>
+
+<!-- ── LOCK SCREEN ── -->
+<div id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-icon">🔐</div>
+    <div class="lock-title">ACCESO PRIVADO</div>
+    <p class="lock-sub">Sorteo Gran Premio · Solo organizadora</p>
+    <input class="lock-input" type="password" id="pwd-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()" />
+    <button class="lock-btn" onclick="checkPwd()">ENTRAR →</button>
+    <p class="lock-error" id="pwd-error">Contraseña incorrecta</p>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div id="main">
+
+  <div class="sorteo-header">
+    <h1>🏍️ SORTEO EN VIVO</h1>
+    <p>GRAN SORTEO MOTO 0KM · 26 DE MAYO 2026</p>
+  </div>
+
+  <div class="sorteo-layout">
+
+    <!-- Panel participantes -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">PARTICIPANTES</div>
+        <div class="panel-count" id="count-txt">0 inscriptos cargados</div>
+        <div class="panel-list" id="participant-list">
+          <div class="loading-txt">Cargá los participantes →</div>
+        </div>
+        <button class="load-btn" onclick="cargarDesideSheet()">
+          📊 CARGAR DESDE PLANILLA
+        </button>
+        <div class="manual-section">
+          <div class="manual-row">
+            <input class="manual-input" id="manual-name" placeholder="Nombre / Instagram" onkeydown="if(event.key==='Enter')agregarManual()" />
+            <button class="manual-add-btn" onclick="agregarManual()">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arena -->
+    <div class="arena" id="arena">
+
+      <div class="slot-wrapper">
+        <div class="slot-window">
+          <div class="slot-glow-top"></div>
+          <div class="slot-glow-bottom"></div>
+          <div class="slot-border"></div>
+          <div class="slot-names" id="slot-names">
+            <div class="slot-name" style="color:rgba(255,255,255,.2)">· · ·</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="sortear-btn" id="sortear-btn" onclick="iniciarSorteo()" disabled>
+        🎰 &nbsp;SORTEAR
+      </button>
+
+      <p class="arena-hint" id="arena-hint">Cargá los participantes para comenzar</p>
+
+    </div>
+  </div>
+</div>
+
+<!-- Ganador overlay -->
+<div id="winner-overlay">
+  <div class="winner-card">
+    <div class="winner-crown">🏆</div>
+    <div class="winner-label">¡GANADOR DEL SORTEO!</div>
+    <div class="winner-name" id="w-name">—</div>
+    <div class="winner-ig" id="w-ig"></div>
+    <div class="winner-id" id="w-id">—</div>
+    <div class="winner-opcion" id="w-opcion"></div>
+    <button class="winner-close" onclick="cerrarGanador()">CERRAR</button>
+  </div>
+</div>
+
+<canvas id="confetti-sorteo"></canvas>
+
+<script>
+/* ── CONFIGURACIÓN ── */
+const GAS_URL  = 'https://script.google.com/macros/s/AKfycbzb-6PLBkNBFWFKH6QLtS2fmrvTJhdC_a1Orp-st0yA63xsR51Tv01VlQEAmaNQGa4hpQ/exec';
+const PASSWORD = 'caren2026';  // ← Contraseña privada
+
+/* ── PARTICIPANTES ── */
+let participantes = [];
+
+/* ── CONTRASEÑA ── */
+function checkPwd() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+  } else {
+    document.getElementById('pwd-error').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+/* ── CARGAR DESDE SHEET ── */
+async function cargarDesideSheet() {
+  const btn = document.querySelector('.load-btn');
+  btn.textContent = '⏳ Cargando...'; btn.disabled = true;
+  try {
+    const url = GAS_URL + '?action=participantes';
+    const r   = await fetch(url);
+    const data = await r.json();
+    if (!Array.isArray(data) || data.length === 0) {
+      alert('No hay participantes con pago confirmado en la planilla.');
+      return;
+    }
+    participantes = data;
+    renderParticipantes();
+  } catch(err) {
+    alert('Error al cargar. Ingresalos manualmente.');
+    console.error(err);
+  } finally {
+    btn.textContent = '📊 CARGAR DESDE PLANILLA';
+    btn.disabled = false;
+  }
+}
+
+/* ── AGREGAR MANUAL ── */
+function agregarManual() {
+  const input = document.getElementById('manual-name');
+  const nombre = input.value.trim();
+  if (!nombre) return;
+  participantes.push({ id: 'MANUAL', nombre, instagram: '', opcion: '1 Ticket' });
+  renderParticipantes();
+  input.value = '';
+  input.focus();
+}
+
+/* ── RENDER ── */
+function renderParticipantes() {
+  const list  = document.getElementById('participant-list');
+  const count = document.getElementById('count-txt');
+  const btn   = document.getElementById('sortear-btn');
+  const hint  = document.getElementById('arena-hint');
+
+  count.textContent = participantes.length + ' inscriptos cargados';
+  btn.disabled = participantes.length === 0;
+  hint.textContent = participantes.length > 0
+    ? `${participantes.length} participantes listos · Presioná SORTEAR`
+    : 'Cargá los participantes para comenzar';
+
+  list.innerHTML = participantes.map((p, i) => `
+    <div class="participant-item">
+      <span class="num">${i + 1}</span>
+      <div class="info">
+        <div class="name">${p.nombre}</div>
+        <div class="ig">${p.instagram || p.id}</div>
+      </div>
+      <span class="ticket-badge">${p.opcion || '1T'}</span>
+    </div>
+  `).join('');
+}
+
+/* ── SORTEO ANIMADO ── */
+let sorteando = false;
+
+function iniciarSorteo() {
+  if (sorteando || participantes.length === 0) return;
+  sorteando = true;
+  document.getElementById('sortear-btn').disabled = true;
+  document.getElementById('arena-hint').textContent = '🎰 Sorteando...';
+
+  const ganador = participantes[Math.floor(Math.random() * participantes.length)];
+
+  const slotNames  = document.getElementById('slot-names');
+  let speed        = 40;
+  let totalFrames  = 0;
+  const totalTime  = 4000;
+  let elapsed      = 0;
+  let lastTime     = null;
+  let idx          = 0;
+
+  function buildNames(winner) {
+    const shuffled = [...participantes].sort(() => Math.random() - .5);
+    const names    = [...shuffled, ...shuffled, ...shuffled, winner];
+    return names;
+  }
+
+  const names = buildNames(ganador);
+  let nameIdx = 0;
+
+  function tick(ts) {
+    if (!lastTime) lastTime = ts;
+    const dt = ts - lastTime;
+    elapsed += dt;
+    lastTime = ts;
+
+    const progress  = elapsed / totalTime;
+    const eased     = progress < 0.7 ? 1 : 1 - Math.pow((progress - 0.7) / 0.3, 2);
+    const interval  = 40 + (1 - eased) * 360;
+
+    idx += dt;
+    if (idx >= interval) {
+      idx = 0;
+      nameIdx = (nameIdx + 1) % names.length;
+      const n = names[nameIdx];
+      slotNames.innerHTML = `<div class="slot-name" style="color:${colorForName(n.nombre)}">${n.nombre}</div>`;
+    }
+
+    if (elapsed < totalTime) {
+      requestAnimationFrame(tick);
+    } else {
+      slotNames.innerHTML = `
+        <div class="slot-name" style="color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.8)">
+          ${ganador.nombre}
+        </div>`;
+      setTimeout(() => mostrarGanador(ganador), 600);
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
+
+const colors = ['#ff6a00','#ffd700','#44dd77','#ff88cc','#88ccff','#fff'];
+function colorForName(n) {
+  let h = 0; for (let c of n) h = (h * 31 + c.charCodeAt(0)) % colors.length;
+  return colors[h];
+}
+
+/* ── MOSTRAR GANADOR ── */
+function mostrarGanador(g) {
+  document.getElementById('w-name').textContent   = g.nombre;
+  document.getElementById('w-ig').textContent     = g.instagram ? '@' + g.instagram.replace('@','') : '';
+  document.getElementById('w-id').textContent     = g.id !== 'MANUAL' ? g.id : '🏆 GANADOR';
+  document.getElementById('w-opcion').textContent = g.opcion;
+  document.getElementById('winner-overlay').classList.add('show');
+  launchConfettiSorteo();
+}
+
+function cerrarGanador() {
+  document.getElementById('winner-overlay').classList.remove('show');
+  sorteando = false;
+  document.getElementById('sortear-btn').disabled = false;
+  document.getElementById('arena-hint').textContent =
+    participantes.length + ' participantes listos · Presioná SORTEAR';
+}
+
+/* ── CONFETTI ── */
+function launchConfettiSorteo() {
+  const cvs = document.getElementById('confetti-sorteo');
+  const ctx = cvs.getContext('2d');
+  cvs.width  = innerWidth; cvs.height = innerHeight;
+  const colors2 = ['#ff6a00','#ffd700','#ffb300','#fff','#44dd77','#ff44cc'];
+  const pieces  = Array.from({length:200}, () => ({
+    x: Math.random() * cvs.width,
+    y: -20 - Math.random() * 300,
+    r: Math.random() * 7 + 3,
+    color: colors2[Math.floor(Math.random() * colors2.length)],
+    tilt: Math.random() * 10 - 5,
+    tiltSpeed: (Math.random() - .5) * .2,
+    vy: Math.random() * 4 + 2,
+    vx: (Math.random() - .5) * 3,
+    alpha: 1,
+  }));
+  let frame = 0;
+  (function tick() {
+    if (frame > 240) { ctx.clearRect(0,0,cvs.width,cvs.height); return; }
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+    pieces.forEach(p => {
+      p.y += p.vy; p.x += p.vx; p.tilt += p.tiltSpeed;
+      if (frame > 160) p.alpha -= .015;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.alpha);
+      ctx.fillStyle   = p.color;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, p.r, p.r*.4, p.tilt, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    });
+    frame++;
+    requestAnimationFrame(tick);
+  })();
+}
+</script>
+
+</body>
+</html>
