@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gran Sorteo · Moto 0km</title>
+  <title>Gran Sorteo Honda XR 150L 0km · CarenSorteos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
@@ -856,7 +856,7 @@
   <div class="hero-pill">🏍️ &nbsp;Sorteo · 10 de Julio 2026</div>
 
   <h1 class="gradient-text">GANÁ<br>TU MOTO</h1>
-  <p class="hero-sub">Participá y llevate esta bestia 0km</p>
+  <p class="hero-sub">Participá y llevate esta <strong>Honda XR 150L</strong> 0km</p>
 
   <div class="moto-wrap">
     <img src="moto-honda.png" alt="Honda XR 0km – Premio del sorteo" />
@@ -1567,14 +1567,17 @@ document.head.appendChild(shakeStyle);
 
 <!--
 ════════════════════════════════════════════════════════
-  APPS SCRIPT ACTUALIZADO — PEGAR EN EXTENSIONES → APPS SCRIPT
+  APPS SCRIPT COMPLETO — PEGAR EN EXTENSIONES → APPS SCRIPT
+  (Reemplazá TODO el contenido del editor con este código)
 ════════════════════════════════════════════════════════
 
   function doGet(e) {
+    if (e.parameter.action === 'participantes') {
+      return obtenerParticipantes();
+    }
     if (e.parameter.action === 'confirmar') {
-      const sheet = SpreadsheetApp
-        .openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8')
-        .getActiveSheet();
+      const ss = SpreadsheetApp.openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8');
+      const sheet = ss.getSheetByName('Personas que pagaron') || ss.getActiveSheet();
       const id = e.parameter.id;
       const rows = sheet.getDataRange().getValues();
       for (let i = 1; i < rows.length; i++) {
@@ -1590,10 +1593,35 @@ document.head.appendChild(shakeStyle);
 
   function doPost(e) { return handleData(e); }
 
+  // Lee la solapa "Personas que pagaron" y devuelve el pool de boletos.
+  // Alguien con "4 Tickets" aparece 4 veces, "3 Tickets" → 3 veces, etc.
+  function obtenerParticipantes() {
+    const ss = SpreadsheetApp.openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8');
+    const sheet = ss.getSheetByName('Personas que pagaron') || ss.getActiveSheet();
+    const rows = sheet.getDataRange().getValues();
+    const result = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r[2]) continue;
+      const op = String(r[8] || '');
+      const n = op.includes('4') ? 4 : op.includes('3') ? 3 : op.includes('2') ? 2 : 1;
+      for (let k = 0; k < n; k++) {
+        result.push({
+          id:        r[0] || 'MANUAL',
+          nombre:    (r[2] + ' ' + r[3]).trim(),
+          instagram: r[7] || '',
+          opcion:    op,
+          monto:     r[9] || '',
+        });
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   function handleData(e) {
-    const sheet = SpreadsheetApp
-      .openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8')
-      .getActiveSheet();
+    const ss = SpreadsheetApp.openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8');
+    const sheet = ss.getSheetByName('Personas que pagaron') || ss.getActiveSheet();
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(['ID','Fecha','Nombre','Apellido','Email','Telefono',
         'Localidad','Instagram','Opcion','Monto','Estado']);
@@ -1604,8 +1632,16 @@ document.head.appendChild(shakeStyle);
     try {
       MailApp.sendEmail({
         to: p.email,
-        subject: 'Participacion registrada! ID: ' + p.id + ' - Gran Sorteo Moto 0km',
-        htmlBody: '<h2>Hola ' + p.nombre + '!</h2><p>Tu ID: <strong>' + p.id + '</strong></p><p>Opcion: ' + p.opcion + ' - ' + p.monto + '</p><p>Sorteo: 10 de Julio 2026</p>'
+        subject: '¡Registrado! ID: ' + p.id + ' — Gran Sorteo Honda XR 150L 0km',
+        htmlBody:
+          '<h2>¡Hola ' + p.nombre + '!</h2>' +
+          '<p>Tu participación quedó registrada. 🎉</p>' +
+          '<p>🆔 <strong>ID:</strong> ' + p.id + '</p>' +
+          '<p>🎟️ <strong>Opción:</strong> ' + p.opcion + '</p>' +
+          '<p>💰 <strong>Monto:</strong> ' + p.monto + '</p>' +
+          '<p>🏍️ <strong>Premio:</strong> Honda XR 150L 0km</p>' +
+          '<p>📅 <strong>Sorteo:</strong> 10 de Julio 2026</p>' +
+          '<p>¡Mucha suerte! 🍀</p>'
       });
     } catch(err) { Logger.log(err); }
     return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);

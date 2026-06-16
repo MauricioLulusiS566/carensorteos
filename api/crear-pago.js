@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
       },
       body: JSON.stringify({
         items: [{
-          title: (p.opcion || 'Ticket') + ' — Gran Sorteo Moto 0km',
+          title: (p.opcion || 'Ticket') + ' — Gran Sorteo Honda XR 150L 0km',
           quantity: 1,
           unit_price: montoNum,
           currency_id: 'ARS'
