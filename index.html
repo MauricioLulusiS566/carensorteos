@@ -385,6 +385,46 @@
     .btn-1 { background: linear-gradient(135deg,#cd7f32,#7a4100); color: #fff; }
     .btn-2 { background: linear-gradient(135deg,#bdbdbd,#616161); color: #fff; }
     .btn-3 { background: linear-gradient(135deg,var(--gold),var(--orange)); color: #000; }
+    .btn-4 { background: linear-gradient(135deg,#ff3300,#ff8c00); color: #fff; }
+
+    /* Tier 4 */
+    .tcard.tier-4 { border-color: rgba(255,51,0,.3); }
+    .tcard.tier-4:hover { border-color: #ff3300; box-shadow: 0 24px 70px rgba(255,51,0,.4); }
+    .icon-4 { background: linear-gradient(135deg,#ff3300,#ff8c00); }
+    .dot-4  { background: #ff3300; }
+    .price-4 {
+      background: linear-gradient(135deg,#ff3300,#ff8c00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Specs moto ── */
+    .specs-section {
+      padding: 0 20px 70px;
+      max-width: 1000px; margin: 0 auto;
+      text-align: center;
+    }
+    .specs-moto-img {
+      width: 100%; max-width: 460px;
+      border-radius: 22px;
+      filter: drop-shadow(0 20px 50px rgba(255,51,0,.35));
+      margin-bottom: 32px;
+    }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px; margin-top: 32px;
+    }
+    .spec-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px 14px;
+      transition: border-color .25s, transform .25s;
+    }
+    .spec-card:hover { border-color: var(--orange); transform: translateY(-4px); }
+    .spec-icon { font-size: 1.8rem; display: block; margin-bottom: 8px; }
+    .spec-label { font-size: .62rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+    .spec-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px; color: var(--gold); display: block; }
 
     /* ══════════════════════════════════════════
        MODAL OVERLAY
@@ -813,7 +853,7 @@
   <p class="hero-sub">Participá y llevate esta bestia 0km</p>
 
   <div class="moto-wrap">
-    <img src="image.png" alt="Moto 0km – Premio del sorteo" />
+    <img src="moto-honda.jpg" alt="Honda XR 0km – Premio del sorteo" />
     <div class="moto-shadow"></div>
   </div>
 </section>
@@ -826,7 +866,7 @@
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
-    <div class="stat-num gradient-text">3</div>
+    <div class="stat-num gradient-text">4</div>
     <div class="stat-lbl">Opciones</div>
   </div>
   <div class="stat-divider"></div>
@@ -840,6 +880,47 @@
     <div class="stat-lbl">Seguro</div>
   </div>
 </div>
+
+<!-- ══════════ SPECS MOTO ══════════ -->
+<section class="specs-section z1">
+  <p class="section-label">El Premio</p>
+  <h2 class="section-title">HONDA <span class="gradient-text">XR 150L · 0KM</span></h2>
+
+  <img src="moto-honda.jpg" alt="Honda XR 150L" class="specs-moto-img" />
+
+  <div class="specs-grid">
+    <div class="spec-card">
+      <span class="spec-icon">⚙️</span>
+      <span class="spec-label">Motor</span>
+      <span class="spec-val">149cc · 4T</span>
+    </div>
+    <div class="spec-card">
+      <span class="spec-icon">⚡</span>
+      <span class="spec-label">Potencia</span>
+      <span class="spec-val">12.3 HP</span>
+    </div>
+    <div class="spec-card">
+      <span class="spec-icon">🔧</span>
+      <span class="spec-label">Transmisión</span>
+      <span class="spec-val">5 Vel.</span>
+    </div>
+    <div class="spec-card">
+      <span class="spec-icon">⛽</span>
+      <span class="spec-label">Tanque</span>
+      <span class="spec-val">7 Litros</span>
+    </div>
+    <div class="spec-card">
+      <span class="spec-icon">🏁</span>
+      <span class="spec-label">Tipo</span>
+      <span class="spec-val">Trail</span>
+    </div>
+    <div class="spec-card">
+      <span class="spec-icon">✨</span>
+      <span class="spec-label">Estado</span>
+      <span class="spec-val">0 KM</span>
+    </div>
+  </div>
+</section>
 
 <!-- ══════════ COUNTDOWN ══════════ -->
 <section class="countdown">
@@ -956,6 +1037,28 @@
       </div>
       <div class="tcard-footer">
         <button class="tcard-btn btn-3">Participar →</button>
+      </div>
+    </div>
+
+    <!-- Tier 4 (Fuego) -->
+    <div class="tcard tier-4" onclick="openForm(3)">
+      <div class="ribbon" style="background:linear-gradient(135deg,#ff3300,#ff8c00);color:#fff">🔥 Mejor valor</div>
+      <div class="tcard-top">
+        <div class="tcard-icon icon-4">🔥</div>
+        <div class="tcard-count">4 TICKETS</div>
+        <div class="tcard-sub">MÁXIMAS CHANCES DE GANAR</div>
+      </div>
+      <div class="tear"></div>
+      <div class="tcard-body">
+        <div class="tcard-feature">
+          <span class="dot dot-4"></span>
+          Tu nombre aparece <strong>&nbsp;4 veces</strong>
+        </div>
+        <div class="tcard-price price-4">$33.000</div>
+        <div class="tcard-currency">PESOS ARGENTINOS</div>
+      </div>
+      <div class="tcard-footer">
+        <button class="tcard-btn btn-4">Participar →</button>
       </div>
     </div>
 
@@ -1129,9 +1232,10 @@
    ══════════════════════════════════════════════════════════ */
 const CFG = {
   payLinks: [
-    "https://mpago.la/2GaVdZm",   // $9.000 - 1 ticket
+    "https://mpago.la/2GaVdZm",   // $9.000  - 1 ticket
     "https://mpago.la/1f8To6K",   // $17.000 - 2 tickets
     "https://mpago.la/2yycqjD",   // $25.000 - 3 tickets
+    "https://mpago.la/33pttcQ",   // $33.000 - 4 tickets
   ],
   googleSheetUrl: "https://script.google.com/macros/s/AKfycbyKrZX4iDiE-Mz25sIgSOEujtOz8i69pLLEc2KkRmjlcH9QT3z_q9b-BdevaY-6cWWxDw/exec",
 
@@ -1148,6 +1252,7 @@ const OPS = [
   { label:"1 Ticket",  price:"$9.000",  color:"#cd7f32", emoji:"🥉" },
   { label:"2 Tickets", price:"$17.000", color:"#bdbdbd", emoji:"🥈" },
   { label:"3 Tickets", price:"$25.000", color:"#ffd700", emoji:"🏆" },
+  { label:"4 Tickets", price:"$33.000", color:"#ff3300", emoji:"🔥" },
 ];
 
 let sel = 0;
