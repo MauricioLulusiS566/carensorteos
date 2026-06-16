@@ -257,9 +257,15 @@
 
     .tickets-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
       align-items: stretch;
+    }
+    @media (max-width: 900px) {
+      .tickets-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .tickets-grid { grid-template-columns: 1fr; }
     }
 
     /* Card */
@@ -847,7 +853,7 @@
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero">
-  <div class="hero-pill">🏍️ &nbsp;Sorteo · 26 de Mayo 2026</div>
+  <div class="hero-pill">🏍️ &nbsp;Sorteo · 10 de Julio 2026</div>
 
   <h1 class="gradient-text">GANÁ<br>TU MOTO</h1>
   <p class="hero-sub">Participá y llevate esta bestia 0km</p>
@@ -925,7 +931,7 @@
 <!-- ══════════ COUNTDOWN ══════════ -->
 <section class="countdown">
   <p class="cd-eyebrow">🔥 Fecha del sorteo</p>
-  <div class="cd-date">26 DE MAYO · 2026</div>
+  <div class="cd-date">10 DE JULIO · 2026</div>
   <div class="cd-timer" id="cd-timer">
     <div class="cd-block"><div class="cd-num" id="cd-d">--</div><div class="cd-label">Días</div></div>
     <div class="cd-sep">:</div>
@@ -1202,7 +1208,7 @@
         <p class="paid-id-label" style="margin-top:6px">Guardalo para el día del sorteo</p>
       </div>
 
-      <p class="paid-date">Te esperamos el <strong>26 de Mayo 2026</strong> 🍀<br>¡Mucha suerte!</p>
+      <p class="paid-date">Te esperamos el <strong>10 de Julio 2026</strong> 🍀<br>¡Mucha suerte!</p>
 
       <button class="paid-close-btn" onclick="closeModal('paid-overlay')">
         ✅ &nbsp;CERRAR
@@ -1520,7 +1526,7 @@ function openFormPagado(idx){
 
 /* ── Countdown ──────────────────────────────────── */
 (function(){
-  const target = new Date('2026-05-26T12:00:00-03:00');
+  const target = new Date('2026-07-10T12:00:00-03:00');
   const pad = n => String(n).padStart(2,'0');
   function tick(){
     const diff = target - Date.now();
@@ -1601,7 +1607,7 @@ document.head.appendChild(shakeStyle);
       MailApp.sendEmail({
         to: p.email,
         subject: 'Participacion registrada! ID: ' + p.id + ' - Gran Sorteo Moto 0km',
-        htmlBody: '<h2>Hola ' + p.nombre + '!</h2><p>Tu ID: <strong>' + p.id + '</strong></p><p>Opcion: ' + p.opcion + ' - ' + p.monto + '</p><p>Sorteo: 26 de Mayo 2026</p>'
+        htmlBody: '<h2>Hola ' + p.nombre + '!</h2><p>Tu ID: <strong>' + p.id + '</strong></p><p>Opcion: ' + p.opcion + ' - ' + p.monto + '</p><p>Sorteo: 10 de Julio 2026</p>'
       });
     } catch(err) { Logger.log(err); }
     return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
