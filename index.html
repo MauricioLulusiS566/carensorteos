@@ -1604,7 +1604,7 @@ document.head.appendChild(shakeStyle);
       const r = rows[i];
       if (!r[2]) continue;
       const op = String(r[8] || '');
-      const n = op.includes('4') ? 4 : op.includes('3') ? 3 : op.includes('2') ? 2 : 1;
+      const n = op.includes('4') ? 10 : op.includes('3') ? 7 : op.includes('2') ? 5 : 3;
       for (let k = 0; k < n; k++) {
         result.push({
           id:        r[0] || 'MANUAL',
