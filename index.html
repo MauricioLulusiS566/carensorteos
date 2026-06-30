@@ -853,7 +853,7 @@
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero">
-  <div class="hero-pill">🏍️ &nbsp;Sorteo · 16 de Julio 2026</div>
+  <div class="hero-pill">🏍️ &nbsp;Sorteo · 20 de Julio 2026</div>
 
   <h1 class="gradient-text">GANÁ<br>TU MOTO</h1>
   <p class="hero-sub">Participá y llevate esta <strong>Honda XR 150L</strong> 0km</p>
@@ -929,7 +929,7 @@
 <!-- ══════════ COUNTDOWN ══════════ -->
 <section class="countdown">
   <p class="cd-eyebrow">🔥 Fecha del sorteo</p>
-  <div class="cd-date">16 DE JULIO · 2026</div>
+  <div class="cd-date">20 DE JULIO · 2026</div>
   <div class="cd-timer" id="cd-timer">
     <div class="cd-block"><div class="cd-num" id="cd-d">--</div><div class="cd-label">Días</div></div>
     <div class="cd-sep">:</div>
@@ -1206,7 +1206,7 @@
         <p class="paid-id-label" style="margin-top:6px">Guardalo para el día del sorteo</p>
       </div>
 
-      <p class="paid-date">Te esperamos el <strong>16 de Julio 2026</strong> 🍀<br>¡Mucha suerte!</p>
+      <p class="paid-date">Te esperamos el <strong>20 de Julio 2026</strong> 🍀<br>¡Mucha suerte!</p>
 
       <button class="paid-close-btn" onclick="closeModal('paid-overlay')">
         ✅ &nbsp;CERRAR
@@ -1524,7 +1524,7 @@ function openFormPagado(idx){
 
 /* ── Countdown ──────────────────────────────────── */
 (function(){
-  const target = new Date('2026-07-16T12:00:00-03:00');
+  const target = new Date('2026-07-20T12:00:00-03:00');
   const pad = n => String(n).padStart(2,'0');
   function tick(){
     const diff = target - Date.now();
@@ -1640,7 +1640,7 @@ document.head.appendChild(shakeStyle);
           '<p>🎟️ <strong>Opción:</strong> ' + p.opcion + '</p>' +
           '<p>💰 <strong>Monto:</strong> ' + p.monto + '</p>' +
           '<p>🏍️ <strong>Premio:</strong> Honda XR 150L 0km</p>' +
-          '<p>📅 <strong>Sorteo:</strong> 16 de Julio 2026</p>' +
+          '<p>📅 <strong>Sorteo:</strong> 20 de Julio 2026</p>' +
           '<p>¡Mucha suerte! 🍀</p>'
       });
     } catch(err) { Logger.log(err); }
