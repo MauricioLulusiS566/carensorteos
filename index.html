@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gran Sorteo Honda XR 150L 0km · CarenSorteos</title>
+  <title>Gran Sorteo Guerrero Trip 110 Econo 0km · CarenSorteos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
@@ -257,12 +257,11 @@
 
     .tickets-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 20px;
       align-items: stretch;
-    }
-    @media (max-width: 900px) {
-      .tickets-grid { grid-template-columns: repeat(2, 1fr); }
+      max-width: 620px;
+      margin: 0 auto;
     }
     @media (max-width: 560px) {
       .tickets-grid { grid-template-columns: 1fr; }
@@ -853,13 +852,16 @@
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero">
-  <div class="hero-pill">🏍️ &nbsp;Sorteo · 29 de Julio 2026</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:24px">
+    <div class="hero-pill" style="margin-bottom:0">🏍️ &nbsp;Sorteo · 10 de Septiembre 2026</div>
+    <div class="hero-pill" style="margin-bottom:0;background:linear-gradient(135deg,#22c55e,#16a34a)">❤️ &nbsp;Todo lo recaudado va a un Hogar de Niños</div>
+  </div>
 
   <h1 class="gradient-text">GANÁ<br>TU MOTO</h1>
-  <p class="hero-sub">Participá y llevate esta <strong>Honda XR 150L</strong> 0km</p>
+  <p class="hero-sub">Participá y llevate esta <strong>Guerrero Trip 110 Econo</strong> 0km</p>
 
   <div class="moto-wrap">
-    <img src="moto-honda.png" alt="Honda XR 0km – Premio del sorteo" />
+    <img src="moto-trip110.png" alt="Guerrero Trip 110 Econo 0km – Premio del sorteo" />
     <div class="moto-shadow"></div>
   </div>
 </section>
@@ -872,7 +874,7 @@
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
-    <div class="stat-num gradient-text">4</div>
+    <div class="stat-num gradient-text">2</div>
     <div class="stat-lbl">Opciones</div>
   </div>
   <div class="stat-divider"></div>
@@ -890,33 +892,33 @@
 <!-- ══════════ SPECS MOTO ══════════ -->
 <section class="specs-section z1">
   <p class="section-label">El Premio</p>
-  <h2 class="section-title">HONDA <span class="gradient-text">XR 150L · 0KM</span></h2>
+  <h2 class="section-title">GUERRERO TRIP <span class="gradient-text">110 ECONO · 0KM</span></h2>
 
   <div class="specs-grid">
     <div class="spec-card">
       <span class="spec-icon">⚙️</span>
       <span class="spec-label">Motor</span>
-      <span class="spec-val">149cc · 4T</span>
+      <span class="spec-val">108cc · 4T</span>
     </div>
     <div class="spec-card">
       <span class="spec-icon">⚡</span>
       <span class="spec-label">Potencia</span>
-      <span class="spec-val">12.3 HP</span>
+      <span class="spec-val">7.5 HP</span>
     </div>
     <div class="spec-card">
       <span class="spec-icon">🔧</span>
       <span class="spec-label">Transmisión</span>
-      <span class="spec-val">5 Vel.</span>
+      <span class="spec-val">4 Vel.</span>
     </div>
     <div class="spec-card">
       <span class="spec-icon">⛽</span>
       <span class="spec-label">Tanque</span>
-      <span class="spec-val">7 Litros</span>
+      <span class="spec-val">4 Litros</span>
     </div>
     <div class="spec-card">
       <span class="spec-icon">🏁</span>
       <span class="spec-label">Tipo</span>
-      <span class="spec-val">Trail</span>
+      <span class="spec-val">Urbana</span>
     </div>
     <div class="spec-card">
       <span class="spec-icon">✨</span>
@@ -929,7 +931,7 @@
 <!-- ══════════ COUNTDOWN ══════════ -->
 <section class="countdown">
   <p class="cd-eyebrow">🔥 Fecha del sorteo</p>
-  <div class="cd-date">29 DE JULIO · 2026</div>
+  <div class="cd-date">10 DE SEPTIEMBRE · 2026</div>
   <div class="cd-timer" id="cd-timer">
     <div class="cd-block"><div class="cd-num" id="cd-d">--</div><div class="cd-label">Días</div></div>
     <div class="cd-sep">:</div>
@@ -993,7 +995,7 @@
           <span class="dot dot-1"></span>
           Tu nombre aparece <strong>&nbsp;3 veces</strong>
         </div>
-        <div class="tcard-price price-1">$9.000</div>
+        <div class="tcard-price price-1">$1.500</div>
         <div class="tcard-currency">PESOS ARGENTINOS</div>
       </div>
       <div class="tcard-footer">
@@ -1001,29 +1003,8 @@
       </div>
     </div>
 
-    <!-- Tier 2 -->
-    <div class="tcard tier-2" onclick="openForm(1)">
-      <div class="tcard-top">
-        <div class="tcard-icon icon-2">🎟️</div>
-        <div class="tcard-count">2 TICKETS</div>
-        <div class="tcard-sub">DOBLE CHANCE DE GANAR</div>
-      </div>
-      <div class="tear"></div>
-      <div class="tcard-body">
-        <div class="tcard-feature">
-          <span class="dot dot-2"></span>
-          Tu nombre aparece <strong>&nbsp;5 veces</strong>
-        </div>
-        <div class="tcard-price price-2">$17.000</div>
-        <div class="tcard-currency">PESOS ARGENTINOS</div>
-      </div>
-      <div class="tcard-footer">
-        <button class="tcard-btn btn-2">Participar →</button>
-      </div>
-    </div>
-
     <!-- Tier 3 (Gold) -->
-    <div class="tcard tier-3" onclick="openForm(2)">
+    <div class="tcard tier-3" onclick="openForm(1)">
       <div class="ribbon">⭐ Más popular</div>
       <div class="tcard-top">
         <div class="tcard-icon icon-3">🏆</div>
@@ -1036,33 +1017,11 @@
           <span class="dot dot-3"></span>
           Tu nombre aparece <strong>&nbsp;7 veces</strong>
         </div>
-        <div class="tcard-price price-3">$25.000</div>
+        <div class="tcard-price price-3">$2.500</div>
         <div class="tcard-currency">PESOS ARGENTINOS</div>
       </div>
       <div class="tcard-footer">
         <button class="tcard-btn btn-3">Participar →</button>
-      </div>
-    </div>
-
-    <!-- Tier 4 (Fuego) -->
-    <div class="tcard tier-4" onclick="openForm(3)">
-      <div class="ribbon" style="background:linear-gradient(135deg,#ff3300,#ff8c00);color:#fff">🔥 Mejor valor</div>
-      <div class="tcard-top">
-        <div class="tcard-icon icon-4">🔥</div>
-        <div class="tcard-count">4 TICKETS</div>
-        <div class="tcard-sub">MÁXIMAS CHANCES DE GANAR</div>
-      </div>
-      <div class="tear"></div>
-      <div class="tcard-body">
-        <div class="tcard-feature">
-          <span class="dot dot-4"></span>
-          Tu nombre aparece <strong>&nbsp;10 veces</strong>
-        </div>
-        <div class="tcard-price price-4">$33.000</div>
-        <div class="tcard-currency">PESOS ARGENTINOS</div>
-      </div>
-      <div class="tcard-footer">
-        <button class="tcard-btn btn-4">Participar →</button>
       </div>
     </div>
 
@@ -1206,7 +1165,7 @@
         <p class="paid-id-label" style="margin-top:6px">Guardalo para el día del sorteo</p>
       </div>
 
-      <p class="paid-date">Te esperamos el <strong>29 de Julio 2026</strong> 🍀<br>¡Mucha suerte!</p>
+      <p class="paid-date">Te esperamos el <strong>10 de Septiembre 2026</strong> 🍀<br>¡Mucha suerte!</p>
 
       <button class="paid-close-btn" onclick="closeModal('paid-overlay')">
         ✅ &nbsp;CERRAR
@@ -1219,6 +1178,7 @@
 <!-- ══════════ FOOTER ══════════ -->
 <footer>
   <p>© 2025 Gran Sorteo · Bases y condiciones disponibles · Organizado en Argentina</p>
+  <p style="margin-top:6px">❤️ Todo lo recaudado se dona íntegramente a un Hogar de Niños</p>
   <p style="margin-top:6px">Ante cualquier consulta escribinos por Instagram</p>
 </footer>
 
@@ -1236,10 +1196,8 @@
    ══════════════════════════════════════════════════════════ */
 const CFG = {
   payLinks: [
-    "https://mpago.la/2GaVdZm",   // $9.000  - 1 ticket
-    "https://mpago.la/1f8To6K",   // $17.000 - 2 tickets
-    "https://mpago.la/2yycqjD",   // $25.000 - 3 tickets
-    "https://mpago.la/33pttcQ",   // $33.000 - 4 tickets
+    "https://mpago.la/2sC1g3S",   // $1.500 - 1 ticket
+    "https://mpago.la/27CdziK",   // $2.500 - 3 tickets
   ],
   googleSheetUrl: "https://script.google.com/macros/s/AKfycbz0nT8ID0L49M8qXmwpXjfOZmP7fwypTdnC412VgI54RycQUeB3tenpoLOCVMe3cjcXtQ/exec",
 
@@ -1253,10 +1211,8 @@ const CFG = {
 
 /* ── Opciones ─────────────────────────────────────── */
 const OPS = [
-  { label:"1 Ticket",  price:"$9.000",  color:"#cd7f32", emoji:"🥉" },
-  { label:"2 Tickets", price:"$17.000", color:"#bdbdbd", emoji:"🥈" },
-  { label:"3 Tickets", price:"$25.000", color:"#ffd700", emoji:"🏆" },
-  { label:"4 Tickets", price:"$33.000", color:"#ff3300", emoji:"🔥" },
+  { label:"1 Ticket",  price:"$1.500", color:"#cd7f32", emoji:"🥉" },
+  { label:"3 Tickets", price:"$2.500", color:"#ffd700", emoji:"🏆" },
 ];
 
 let sel = 0;
@@ -1524,7 +1480,7 @@ function openFormPagado(idx){
 
 /* ── Countdown ──────────────────────────────────── */
 (function(){
-  const target = new Date('2026-07-29T12:00:00-03:00');
+  const target = new Date('2026-09-10T12:00:00-03:00');
   const pad = n => String(n).padStart(2,'0');
   function tick(){
     const diff = target - Date.now();
@@ -1632,15 +1588,15 @@ document.head.appendChild(shakeStyle);
     try {
       MailApp.sendEmail({
         to: p.email,
-        subject: '¡Registrado! ID: ' + p.id + ' — Gran Sorteo Honda XR 150L 0km',
+        subject: '¡Registrado! ID: ' + p.id + ' — Gran Sorteo Guerrero Trip 110 Econo 0km',
         htmlBody:
           '<h2>¡Hola ' + p.nombre + '!</h2>' +
           '<p>Tu participación quedó registrada. 🎉</p>' +
           '<p>🆔 <strong>ID:</strong> ' + p.id + '</p>' +
           '<p>🎟️ <strong>Opción:</strong> ' + p.opcion + '</p>' +
           '<p>💰 <strong>Monto:</strong> ' + p.monto + '</p>' +
-          '<p>🏍️ <strong>Premio:</strong> Honda XR 150L 0km</p>' +
-          '<p>📅 <strong>Sorteo:</strong> 29 de Julio 2026</p>' +
+          '<p>🏍️ <strong>Premio:</strong> Guerrero Trip 110 Econo 0km</p>' +
+          '<p>📅 <strong>Sorteo:</strong> 10 de Septiembre 2026</p>' +
           '<p>¡Mucha suerte! 🍀</p>'
       });
     } catch(err) { Logger.log(err); }
