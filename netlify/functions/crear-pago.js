@@ -13,7 +13,7 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         items: [{
-          title: (p.opcion || 'Ticket') + ' — Gran Sorteo Moto 0km',
+          title: (p.opcion || 'Ticket') + ' — Gran Sorteo Guerrero Trip 110 Econo 0km',
           quantity: 1,
           unit_price: montoNum,
           currency_id: 'ARS'
