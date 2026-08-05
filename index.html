@@ -257,11 +257,12 @@
 
     .tickets-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
       align-items: stretch;
-      max-width: 620px;
-      margin: 0 auto;
+    }
+    @media (max-width: 900px) {
+      .tickets-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 560px) {
       .tickets-grid { grid-template-columns: 1fr; }
@@ -874,7 +875,7 @@
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
-    <div class="stat-num gradient-text">2</div>
+    <div class="stat-num gradient-text">3</div>
     <div class="stat-lbl">Opciones</div>
   </div>
   <div class="stat-divider"></div>
@@ -1022,6 +1023,28 @@
       </div>
       <div class="tcard-footer">
         <button class="tcard-btn btn-3">Participar →</button>
+      </div>
+    </div>
+
+    <!-- Tier 4 (Fuego) -->
+    <div class="tcard tier-4" onclick="openForm(2)">
+      <div class="ribbon" style="background:linear-gradient(135deg,#ff3300,#ff8c00);color:#fff">🔥 Mejor valor</div>
+      <div class="tcard-top">
+        <div class="tcard-icon icon-4">🔥</div>
+        <div class="tcard-count">5 TICKETS</div>
+        <div class="tcard-sub">MÁXIMAS CHANCES DE GANAR</div>
+      </div>
+      <div class="tear"></div>
+      <div class="tcard-body">
+        <div class="tcard-feature">
+          <span class="dot dot-4"></span>
+          Tu nombre aparece <strong>&nbsp;11 veces</strong>
+        </div>
+        <div class="tcard-price price-4">$5.200</div>
+        <div class="tcard-currency">PESOS ARGENTINOS</div>
+      </div>
+      <div class="tcard-footer">
+        <button class="tcard-btn btn-4">Participar →</button>
       </div>
     </div>
 
@@ -1198,6 +1221,7 @@ const CFG = {
   payLinks: [
     "https://mpago.la/2sC1g3S",   // $1.500 - 1 ticket
     "https://mpago.la/27CdziK",   // $2.500 - 3 tickets
+    "https://mpago.la/1kDEdUu",   // $5.200 - 5 tickets
   ],
   googleSheetUrl: "https://script.google.com/macros/s/AKfycbz0nT8ID0L49M8qXmwpXjfOZmP7fwypTdnC412VgI54RycQUeB3tenpoLOCVMe3cjcXtQ/exec",
 
@@ -1213,6 +1237,7 @@ const CFG = {
 const OPS = [
   { label:"1 Ticket",  price:"$1.500", color:"#cd7f32", emoji:"🥉" },
   { label:"3 Tickets", price:"$2.500", color:"#ffd700", emoji:"🏆" },
+  { label:"5 Tickets", price:"$5.200", color:"#ff3300", emoji:"🔥" },
 ];
 
 let sel = 0;
