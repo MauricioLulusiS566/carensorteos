@@ -467,13 +467,14 @@
           <th>#</th>
           <th>ID</th>
           <th>Nombre</th>
+          <th>Localidad</th>
           <th>Instagram</th>
           <th>Opción</th>
           <th>Monto</th>
         </tr>
       </thead>
       <tbody id="tabla-body">
-        <tr><td colspan="6" class="tabla-empty">Sin datos</td></tr>
+        <tr><td colspan="7" class="tabla-empty">Sin datos</td></tr>
       </tbody>
     </table>
   </div>
@@ -595,7 +596,7 @@ function renderTabla(data) {
 
   const tbody = document.getElementById('tabla-body');
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="tabla-empty">Sin resultados</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="tabla-empty">Sin resultados</td></tr>';
     return;
   }
   tbody.innerHTML = data.map((p, i) => `
@@ -603,6 +604,7 @@ function renderTabla(data) {
       <td style="color:rgba(255,255,255,.3);font-size:.75rem">${i + 1}</td>
       <td class="td-id">${p.id}</td>
       <td class="td-nombre">${p.nombre}</td>
+      <td>${p.localidad || '—'}</td>
       <td class="td-ig">${p.instagram ? '@'+String(p.instagram).replace('@','') : '—'}</td>
       <td><span class="${badgeClass(p.opcion)}">${p.opcion}</span></td>
       <td class="td-monto">${p.monto}</td>
