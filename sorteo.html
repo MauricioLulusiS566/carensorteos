@@ -534,7 +534,7 @@ async function cargarDesideSheet() {
   const btn = document.getElementById('load-btn');
   btn.textContent = '⏳ Cargando...'; btn.disabled = true;
   try {
-    const r    = await fetch(GAS_URL + '?action=participantes');
+    const r    = await fetch(GAS_URL + '?action=participantes&_=' + Date.now(), { cache: 'no-store' });
     const data = await r.json();
     if (!Array.isArray(data) || data.length === 0) {
       alert('No hay participantes en la solapa "Personas que pagaron".');
