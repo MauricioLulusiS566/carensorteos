@@ -253,7 +253,11 @@
       border-radius: 50px; padding: 6px 20px;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.4rem; letter-spacing: 4px;
-      color: var(--green); margin-bottom: 28px;
+      color: var(--green); margin-bottom: 12px;
+    }
+    .winner-localidad {
+      font-size: .95rem; color: rgba(255,255,255,.6);
+      margin-bottom: 16px;
     }
     .winner-opcion {
       font-size: .82rem; color: rgba(255,255,255,.4);
@@ -493,6 +497,7 @@
     <div class="winner-name" id="w-name">—</div>
     <div class="winner-ig" id="w-ig"></div>
     <div class="winner-id" id="w-id">—</div>
+    <div class="winner-localidad" id="w-localidad"></div>
     <div class="winner-opcion" id="w-opcion"></div>
     <button class="winner-close" onclick="cerrarGanador()">CERRAR</button>
   </div>
@@ -769,10 +774,11 @@ function colorForName(n) {
 
 /* ── MOSTRAR GANADOR ── */
 function mostrarGanador(g) {
-  document.getElementById('w-name').textContent   = g.nombre;
-  document.getElementById('w-ig').textContent     = g.instagram ? '@' + String(g.instagram).replace('@','') : '';
-  document.getElementById('w-id').textContent     = g.id !== 'MANUAL' ? g.id : '🏆 GANADOR';
-  document.getElementById('w-opcion').textContent = g.opcion;
+  document.getElementById('w-name').textContent      = g.nombre;
+  document.getElementById('w-ig').textContent        = g.instagram ? '@' + String(g.instagram).replace('@','') : '';
+  document.getElementById('w-id').textContent        = g.id !== 'MANUAL' ? g.id : '🏆 GANADOR';
+  document.getElementById('w-localidad').textContent = g.localidad ? '📍 ' + g.localidad : '';
+  document.getElementById('w-opcion').textContent    = g.opcion;
   document.getElementById('winner-overlay').classList.add('show');
   launchConfettiSorteo();
 }
