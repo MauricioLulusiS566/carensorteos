@@ -1223,7 +1223,7 @@ const CFG = {
     "https://mpago.la/2bqK963",   // $6.000 - 5 tickets
     "https://mpago.la/1asiVDL",   // $10.000 - 8 tickets
   ],
-  googleSheetUrl: "https://script.google.com/macros/s/AKfycbz0nT8ID0L49M8qXmwpXjfOZmP7fwypTdnC412VgI54RycQUeB3tenpoLOCVMe3cjcXtQ/exec",
+  googleSheetUrl: "https://script.google.com/macros/s/AKfycbx5Qd_gvfcSkoHx7uDk5Qkd1QKHA9uVeYxCEsgGsG-L1PdQJsNLRnsBr5Vr6AfrQizHrA/exec",
 
   // ── EmailJS (para enviar el email al participante) ──
   emailjs: {
@@ -1601,6 +1601,9 @@ document.head.appendChild(shakeStyle);
       .setMimeType(ContentService.MimeType.JSON);
   }
 
+  // Guarda o actualiza un participante. Si el ID ya existe en la hoja,
+  // pisa esa misma fila en vez de agregar una nueva (evita duplicados si
+  // sendToSheet() se dispara más de una vez para el mismo pago).
   function handleData(e) {
     const ss = SpreadsheetApp.openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8');
     const sheet = ss.getSheetByName('Personas que pagaron') || ss.getActiveSheet();
@@ -1609,8 +1612,18 @@ document.head.appendChild(shakeStyle);
         'Localidad','Instagram','Opcion','Monto','Estado']);
     }
     const p = e.parameter;
-    sheet.appendRow([p.id, p.fecha, p.nombre, p.apellido, p.email, p.telefono,
-      p.localidad, p.instagram, p.opcion, p.monto, p.estado]);
+    const fila = [p.id, p.fecha, p.nombre, p.apellido, p.email, p.telefono,
+      p.localidad, p.instagram, p.opcion, p.monto, p.estado];
+
+    const rows = sheet.getDataRange().getValues();
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i][0] === p.id) {
+        sheet.getRange(i + 1, 1, 1, fila.length).setValues([fila]);
+        return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
+      }
+    }
+
+    sheet.appendRow(fila);
     try {
       MailApp.sendEmail({
         to: p.email,
@@ -1627,6 +1640,25 @@ document.head.appendChild(shakeStyle);
       });
     } catch(err) { Logger.log(err); }
     return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
+  }
+
+  // Utilidad de limpieza — ejecutar UNA sola vez a mano desde el editor
+  // (▶ Ejecutar → eliminarDuplicados) para borrar los duplicados que ya
+  // quedaron cargados en la hoja antes de este arreglo.
+  function eliminarDuplicados() {
+    const ss = SpreadsheetApp.openById('1e0ZUQcgeaekQN4lCS66BTvOiOBCIYVvrPVlK3Ls_Pk8');
+    const sheet = ss.getSheetByName('Personas que pagaron') || ss.getActiveSheet();
+    const rows = sheet.getDataRange().getValues();
+    const vistos = new Set();
+    const filasABorrar = [];
+    for (let i = 1; i < rows.length; i++) {
+      const id = rows[i][0];
+      if (!id) continue;
+      if (vistos.has(id)) filasABorrar.push(i + 1);
+      else vistos.add(id);
+    }
+    filasABorrar.sort((a, b) => b - a).forEach(fila => sheet.deleteRow(fila));
+    SpreadsheetApp.getUi().alert('Se eliminaron ' + filasABorrar.length + ' filas duplicadas.');
   }
 
   ⚠️ Guardá, hacé NUEVA implementación y actualizá la URL en googleSheetUrl.
