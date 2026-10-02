@@ -854,7 +854,7 @@
 <!-- ══════════ HERO ══════════ -->
 <section class="hero">
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:24px">
-    <div class="hero-pill" style="margin-bottom:0">🏍️ &nbsp;Sorteo · 10 de Septiembre 2026</div>
+    <div class="hero-pill" style="margin-bottom:0">🏍️ &nbsp;Sorteo · 10 de Noviembre 2026</div>
     <div class="hero-pill" style="margin-bottom:0;background:linear-gradient(135deg,#22c55e,#16a34a)">❤️ &nbsp;Todo lo recaudado va a un Hogar de Niños</div>
   </div>
 
@@ -932,7 +932,7 @@
 <!-- ══════════ COUNTDOWN ══════════ -->
 <section class="countdown">
   <p class="cd-eyebrow">🔥 Fecha del sorteo</p>
-  <div class="cd-date">10 DE SEPTIEMBRE · 2026</div>
+  <div class="cd-date">10 DE NOVIEMBRE · 2026</div>
   <div class="cd-timer" id="cd-timer">
     <div class="cd-block"><div class="cd-num" id="cd-d">--</div><div class="cd-label">Días</div></div>
     <div class="cd-sep">:</div>
@@ -1188,7 +1188,7 @@
         <p class="paid-id-label" style="margin-top:6px">Guardalo para el día del sorteo</p>
       </div>
 
-      <p class="paid-date">Te esperamos el <strong>10 de Septiembre 2026</strong> 🍀<br>¡Mucha suerte!</p>
+      <p class="paid-date">Te esperamos el <strong>10 de Noviembre 2026</strong> 🍀<br>¡Mucha suerte!</p>
 
       <button class="paid-close-btn" onclick="closeModal('paid-overlay')">
         ✅ &nbsp;CERRAR
@@ -1505,7 +1505,7 @@ function openFormPagado(idx){
 
 /* ── Countdown ──────────────────────────────────── */
 (function(){
-  const target = new Date('2026-09-10T12:00:00-03:00');
+  const target = new Date('2026-11-10T12:00:00-03:00');
   const pad = n => String(n).padStart(2,'0');
   function tick(){
     const diff = target - Date.now();
@@ -1635,7 +1635,7 @@ document.head.appendChild(shakeStyle);
           '<p>🎟️ <strong>Opción:</strong> ' + p.opcion + '</p>' +
           '<p>💰 <strong>Monto:</strong> ' + p.monto + '</p>' +
           '<p>🏍️ <strong>Premio:</strong> Honda Wave 110 0km</p>' +
-          '<p>📅 <strong>Sorteo:</strong> 10 de Septiembre 2026</p>' +
+          '<p>📅 <strong>Sorteo:</strong> 10 de Noviembre 2026</p>' +
           '<p>¡Mucha suerte! 🍀</p>'
       });
     } catch(err) { Logger.log(err); }
