@@ -592,7 +592,10 @@ function renderTabla(data) {
   document.getElementById('stat-personas').textContent = data.length + ' personas';
   document.getElementById('stat-boletos').textContent  = participantes.length + ' boletos';
 
-  const badgeClass = op => op.includes('4') ? 'badge-4' : op.includes('3') ? 'badge-3' : op.includes('2') ? 'badge-2' : 'badge-1';
+  const badgeClass = op => {
+    const n = parseInt(op, 10) || 0;
+    return n >= 14 ? 'badge-4' : n >= 8 ? 'badge-3' : n >= 5 ? 'badge-2' : 'badge-1';
+  };
 
   const tbody = document.getElementById('tabla-body');
   if (data.length === 0) {
